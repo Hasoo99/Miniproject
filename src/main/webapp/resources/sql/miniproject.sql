@@ -46,6 +46,46 @@ values ('안녕하세요', '반갑습니다 여러분', 'tosimi');
 insert into hboard(title, content, writer)
 values ('햄스터 분양하고싶어요', '골든햄스터', 'tomoong');
 
-select * from hboard;
+select * from hboard order by boardNo desc;
 
 select * from hboard order by boardNo desc;
+
+-- insert into hboard (title, content, writer)
+values (#{title}, #{content}, #{writer});
+
+--
+
+CREATE TABLE `sky`.`pointdef` (
+  `pointWhy` VARCHAR(20) NOT NULL,
+  `pointScore` INT NULL,
+  PRIMARY KEY (`pointWhy`))
+COMMENT = '유저에게 적립할 포인트에 대한 정책 정의 테이블\n어떤 사유로 몇 포인트를 지급하는지에 대해 정의';
+
+-- 
+
+CREATE TABLE `sky`.`pointlog` (
+  `pointLogNo` INT NOT NULL AUTO_INCREMENT,
+  `pointWho` VARCHAR(8) NOT NULL,
+  `pointWhen` DATETIME NULL DEFAULT now(),
+  `pointWhy` VARCHAR(20) NOT NULL,
+  `pointScore` INT NOT NULL,
+  PRIMARY KEY (`pointLogNo`),
+  INDEX `pointlog_member_fk_idx` (`pointWho` ASC) VISIBLE,
+  CONSTRAINT `pointlog_member_fk`
+    FOREIGN KEY (`pointWho`)
+    REFERENCES `sky`.`member` (`userId`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+COMMENT = '어떤 멤버에게 어떤 사유로 몇 포인트가 언제 지급되었는지 기록 테이블';
+
+-- 글 작성시 멤버에게 포인트 로그를 저장하는 쿼리문
+insert into pointlog(pointWho, pointWhy, pointScore)
+values('tosimi', '글작성', (select pointScore from pointdef where pointwhy = '글작성'));
+-- 멤버에게 지급된 point를 더해서 수정하는 쿼리문
+update member
+set userPoint = userPoint + (select pointScore from pointdef where pointwhy = '글작성')
+where userId = 'tosimi';
+
+select * from member;
+select * from hboard;
+select * from pointlog;

@@ -9,8 +9,11 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.miniproject.controller.HomeController;
+import com.miniproject.model.HBoardDTO;
 import com.miniproject.model.HBoardVO;
 import com.miniproject.service.hboard.HBoardService;
 
@@ -23,27 +26,60 @@ import com.miniproject.service.hboard.HBoardService;
 //		HttpSession 등의 Servlet 객체를 이용할 수 있다.
 //		그 기능은 컨트롤러단에서 구현한다.
 
-
 @Controller // 아래의 클래스가 컨트롤러 객체임을 명시
 @RequestMapping("/hboard") // 해당 이름으로 들어오는 요청을 수행
 public class HboardController {
-	
+
 	private static final Logger logger = LoggerFactory.getLogger(HomeController.class);
-	
+
 	@Inject // service 주입
 	private HBoardService service;
-	
+
 	@RequestMapping("/listAll") // "/hboard/listAll"
 	public void listAll(Model model) {
 		logger.info("HboardController.listAll()...............");
+
+		List<HBoardVO> lst;
+		try {
+			lst = service.getAllBoard();
+			model.addAttribute("status", "success");
+			model.addAttribute("boardList", lst); // model 객체에 데이터 바인딩
+			System.out.println("lst를 바인딩");
+		} catch (Exception e) {
+			e.printStackTrace();
+			System.out.println("exception을 바인딩");
+//			model.addAttribute("status", "fail");
+			model.addAttribute("exception", "error");
+			
+		} // 서비스 메서드 호출
+
+//		for (HBoardVO b : lst) {
+//			System.out.println(b.toString());
+//		}
+
+	}
+
+	@RequestMapping(value="/saveBoard", method=RequestMethod.GET)
+	public String showSaveBoardForm() { // 게시판 글 저장페이지를 출력하는 메서드
+		return "/hboard/saveBoardForm";
+	}
+	
+	@RequestMapping(value="/saveBoard", method=RequestMethod.POST)
+	public String saveBoard(HBoardDTO boardDTO, RedirectAttributes rttr) {
+		System.out.println("글 저장하러 가자" + boardDTO.toString());
 		
-		List<HBoardVO> lst = service.getAllBoard(); // 서비스 메서드 호출
+		String returnPage = "redirect:/hboard/listAll";
 		
-		for (HBoardVO b : lst) {
-			System.out.println(b.toString());
+		try {
+			if(service.saveBoard(boardDTO)) {
+				System.out.println("저장 성공");
+				rttr.addAttribute("status", "success");
+			}
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+			rttr.addAttribute("status", "fail");
 		}
-		model.addAttribute("boardList", lst);
-		
-		
+		return returnPage; // 게시글 전체 목록 페이지로 돌아감.
 	}
 }
