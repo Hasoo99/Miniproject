@@ -21,9 +21,11 @@
 		<beans:property name="suffix" value=".jsp" />
 	</beans:bean>
 	
-	<!-- component를 스캔한다. 즉 아래의 패키지를 스캔하여 객체 확보 -->
 	<context:component-scan base-package="com.miniproject.controller" />
 	
-	
-	
+	<!-- 수신된 멀티파트 의 데이터를 순서대로재조립, 파일업로드 제한 : 10MB -->
+	<beans:bean id="multipartResolver"
+		class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
+	<beans:property name="maxUploadSize" value="10485760"></beans:property>
+	</beans:bean>
 </beans:beans>
