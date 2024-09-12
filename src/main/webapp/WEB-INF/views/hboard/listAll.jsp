@@ -191,8 +191,14 @@
 
 				<c:forEach var="i" begin='${pagingInfo.startPageNoCurBlock }'
 					end='${pagingInfo.endPageNoCurBlock }'>
+					<c:if test="${pagingInfo.pageNo == i}">
+					<li class="page-item active"><a class="page-link"
+						href="/hboard/listAll?pageNo=${i }&pagingSize=${pagingInfo.viewPostCntperPage }">${i }</a></li>
+					</c:if>
+					<c:if test="${pagingInfo.pageNo != i}">
 					<li class="page-item"><a class="page-link"
 						href="/hboard/listAll?pageNo=${i }&pagingSize=${pagingInfo.viewPostCntperPage }">${i }</a></li>
+					</c:if>
 				</c:forEach>
 
 				<c:if test="${pagingInfo.pageNo < pagingInfo.totalPageCnt }">
