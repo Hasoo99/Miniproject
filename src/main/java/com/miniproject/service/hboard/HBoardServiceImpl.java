@@ -20,6 +20,7 @@ import com.miniproject.model.HboardReplyDTO;
 import com.miniproject.model.PagingInfo;
 import com.miniproject.model.PagingInfoDTO;
 import com.miniproject.model.PointLogDTO;
+import com.miniproject.model.SearchCriteriaDTO;
 import com.miniproject.persistence.HBoardDAO;
 import com.miniproject.persistence.MemberDAO;
 import com.miniproject.persistence.PointLogDAO;
@@ -191,7 +192,7 @@ public class HBoardServiceImpl implements HBoardService {
 				if (file.getFileStatus() == BoardUpFileStatus.INSERT) {
 					file.setBoardNo(modifyBoard.getBoardNo()); // 저장되는 파일의 글번호를 수정되는 글의 글번호로 세팅
 					bDao.insertBoardUpFile(file);
-				} else if(file.getFileStatus() == BoardUpFileStatus.DELETE) {
+				} else if (file.getFileStatus() == BoardUpFileStatus.DELETE) {
 					bDao.deleteBoardUpFile(file.getBoardUpFileNo());
 				}
 			}
@@ -201,40 +202,73 @@ public class HBoardServiceImpl implements HBoardService {
 		return result;
 	}
 
-	
 	@Override
 	public Map<String, Object> getAllBoard(PagingInfoDTO dto) throws Exception {
 		PagingInfo pi = makePagingInfo(dto);
-		
 		List<HBoardVO> lst = bDao.selectAllBoard(pi);
-		
+
 //		for(HBoardVO hBoardVO : lst) {
 //			System.out.println(hBoardVO.toString());
 //		}
-		
+
 		Map<String, Object> resultMap = new HashMap<String, Object>();
 		resultMap.put("pagingInfo", pi);
 		resultMap.put("boardList", lst);
-		
+
 		return resultMap;
 	}
 
 	private PagingInfo makePagingInfo(PagingInfoDTO dto) throws Exception {
 		PagingInfo pi = new PagingInfo(dto);
-		
+
 		// Setter 호출
 		pi.setTotalPostCnt(bDao.getTotalPostCnt()); // 전체 글(데이터)의 수
-		
+
 		pi.setTotalPageCnt(); // 전체 페이지 수 세팅
 		pi.setStartRowIndex(); // 현재 페이지에서 보여주기 시작할 글의 index번호
-		
+
 		// 페이징 블럭
 		pi.setPageBlockNoCurPage();
 		pi.setStartPageNoCurBlock();
 		pi.setEndPageNoCurBlock();
-		
+
 		log.info(pi.toString());
+
+		return pi;
+	}
+
+	@Override
+	public Map<String, Object> getAllBoard(PagingInfoDTO dto, SearchCriteriaDTO searchCriteriaDTO) throws Exception {
+//		searchCriteriaDTO.setSearchWord("%" + searchCriteriaDTO.getSearchWord() + "%");
+
+		PagingInfo pi = makePagingInfo(dto, searchCriteriaDTO);
 		
+		List<HBoardVO> lst = bDao.selectAllBoard(pi, searchCriteriaDTO);
+		
+		Map<String, Object> resultMap = new HashMap<String, Object>();
+		resultMap.put("pagingInfo", pi);
+		resultMap.put("boardList", lst);
+
+		return resultMap;
+	}
+
+	private PagingInfo makePagingInfo(PagingInfoDTO dto, SearchCriteriaDTO searchCriteriaDTO) throws Exception {
+		PagingInfo pi = new PagingInfo(dto);
+
+		// Setter 호출
+		log.info("검색된 글의 갯수 : " + bDao.getTotalPostCnt(searchCriteriaDTO));
+		pi.setTotalPostCnt(bDao.getTotalPostCnt(searchCriteriaDTO)); // 전체 글(데이터)의 수
+
+		pi.setTotalPageCnt(); // 전체 페이지 수 세팅
+		pi.setStartRowIndex(); // 현재 페이지에서 보여주기 시작할 글의 index번호
+
+		// 페이징 블럭
+		pi.setPageBlockNoCurPage();
+		pi.setStartPageNoCurBlock();
+		pi.setEndPageNoCurBlock();
+
+		log.info(pi.toString());
+
 		return pi;
 	}
 }

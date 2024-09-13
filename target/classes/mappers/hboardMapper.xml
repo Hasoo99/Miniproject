@@ -12,7 +12,8 @@
 	<select id="getAllHBoard"
 		resultType="com.miniproject.model.HBoardVO">
 		<!-- select * from hboard order by ref desc, refOrder asc -->
-		select * from hboard order by ref desc, refOrder asc limit #{startRowIndex}, #{viewPostCntperPage}
+		select * from hboard order by ref desc, refOrder asc limit
+		#{startRowIndex}, #{viewPostCntperPage}
 	</select>
 
 	<!-- 새로운 게시글을 저장하는 쿼리문 -->
@@ -200,17 +201,50 @@
 
 	<delete id="deleteBoardUpFileByPK">
 		delete from boardupfiles
-		where boardUpFileNo = #{boardUpFileNo}
+		where boardUpFileNo =
+		#{boardUpFileNo}
 	</delete>
-	
+
 	<!-- 페이징 처리 관련 쿼리문 -->
-	
+
 	<select id="selectTotalCount" resultType="int">
-		select count(*) from hboard
+		select count(*) from
+		hboard
 	</select>
-	
-	
-	
-	
+
+	<!-- 게시판 검색 -->
+	<select id="getSearchBoard"
+		resultType="com.miniproject.model.HBoardVO">
+		select * from hboard
+		<choose>
+			<when test="searchType == 'title'">
+				where title like #{searchWord}
+			</when>
+			<when test="searchType == 'writer'">
+				where writer like #{searchWord}
+			</when>
+			<when test="searchType == 'content'">
+				where content like #{searchWord}
+			</when>
+		</choose>
+		order by ref desc, refOrder asc limit
+		#{startRowIndex},
+		#{viewPostCntperPage}
+	</select>
+
+	<select id="selectTotalCountWithSearchCriteria" resultType="int">
+		select count(*) from hboard
+		<choose>
+			<when test="searchType == 'title'">
+				where title like #{searchWord}
+			</when>
+			<when test="searchType == 'writer'">
+				where writer like #{searchWord}
+			</when>
+			<when test="searchType == 'content'">
+				where content like #{searchWord}
+			</when>
+		</choose>
+	</select>
 
 </mapper>

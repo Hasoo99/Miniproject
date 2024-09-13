@@ -10,6 +10,7 @@ import com.miniproject.model.HBoardDTO;
 import com.miniproject.model.HBoardVO;
 import com.miniproject.model.HboardReplyDTO;
 import com.miniproject.model.PagingInfoDTO;
+import com.miniproject.model.SearchCriteriaDTO;
 
 public interface HBoardService {
 	
@@ -44,4 +45,7 @@ public interface HBoardService {
 
 	// 게시글 조회 -- 페이징
 	Map<String, Object> getAllBoard(PagingInfoDTO dto) throws Exception;
+
+	// 게시글 조회 -- 검색
+	Map<String, Object> getAllBoard(PagingInfoDTO dto, SearchCriteriaDTO searchCriteriaDTO)throws Exception;
 }

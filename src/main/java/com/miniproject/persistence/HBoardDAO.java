@@ -8,6 +8,7 @@ import com.miniproject.model.HBoardDTO;
 import com.miniproject.model.HBoardVO;
 import com.miniproject.model.HboardReplyDTO;
 import com.miniproject.model.PagingInfo;
+import com.miniproject.model.SearchCriteriaDTO;
 
 
 public interface HBoardDAO {
@@ -74,5 +75,14 @@ public interface HBoardDAO {
 
 	// 게시글 목록 조회 -- 페이징
 	List<HBoardVO> selectAllBoard(PagingInfo pi)throws Exception;
+
+	// 게시글 목록 조회 -- 검색어
+	List<HBoardVO> selectAllBoard(SearchCriteriaDTO searchCriteriaDTO)throws Exception;
+
+	// 검색된 게시글 수
+	int getTotalPostCnt(SearchCriteriaDTO searchCriteriaDTO)throws Exception;
+
+	// 게시글 목록 조회 -- 검색어 + 페이징
+	List<HBoardVO> selectAllBoard(PagingInfo pi, SearchCriteriaDTO searchCriteriaDTO)throws Exception;
 	
 }

@@ -14,6 +14,7 @@ import com.miniproject.model.HBoardDTO;
 import com.miniproject.model.HBoardVO;
 import com.miniproject.model.HboardReplyDTO;
 import com.miniproject.model.PagingInfo;
+import com.miniproject.model.SearchCriteriaDTO;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -157,6 +158,29 @@ public class HBoardDAOImpl implements HBoardDAO {
 	@Override
 	public List<HBoardVO> selectAllBoard(PagingInfo pi) throws Exception {
 		return ses.selectList(ns + "getAllHBoard", pi);
+	}
+
+	@Override
+	public List<HBoardVO> selectAllBoard(SearchCriteriaDTO searchCriteriaDTO) throws Exception {
+		return ses.selectList(ns + "getSearchBoard", searchCriteriaDTO);
+	}
+
+	@Override
+	public int getTotalPostCnt(SearchCriteriaDTO searchCriteriaDTO) throws Exception {
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("searchType", searchCriteriaDTO.getSearchType());
+		params.put("searchWord", "%" + searchCriteriaDTO.getSearchWord() + "%");
+		return ses.selectOne(ns + "selectTotalCountWithSearchCriteria",params);
+	}
+
+	@Override
+	public List<HBoardVO> selectAllBoard(PagingInfo pi, SearchCriteriaDTO searchCriteriaDTO) throws Exception {
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("startRowIndex", pi.getStartRowIndex());
+		params.put("viewPostCntperPage", pi.getViewPostCntperPage());
+		params.put("searchType", searchCriteriaDTO.getSearchType());
+		params.put("searchWord", "%" + searchCriteriaDTO.getSearchWord() + "%");
+		return ses.selectList(ns + "getSearchBoard", params);
 	}
 
 }

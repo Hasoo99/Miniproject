@@ -35,6 +35,7 @@ import com.miniproject.model.HBoardVO;
 import com.miniproject.model.MyResponseWithoutData;
 import com.miniproject.model.PagingInfo;
 import com.miniproject.model.PagingInfoDTO;
+import com.miniproject.model.SearchCriteriaDTO;
 import com.miniproject.model.HboardReplyDTO;
 import com.miniproject.service.hboard.HBoardService;
 import com.miniproject.util.FileProcess;
@@ -68,19 +69,25 @@ public class HboardController {
 
 	@RequestMapping("/listAll") // "/hboard/listAll"
 	public void listAll(Model model, @RequestParam(value="pageNo", defaultValue = "1") int pageNo
-			, @RequestParam(value="pagingSize", defaultValue = "10") int pagingSize) {
+			, @RequestParam(value="pagingSize", defaultValue = "10") int pagingSize
+			, SearchCriteriaDTO searchCriteriaDTO) {
 		logger.info(pageNo + "번 페이지 출력...");
+		
+		logger.info(searchCriteriaDTO.toString());
 
 		PagingInfoDTO dto = PagingInfoDTO.builder().pageNo(pageNo).pagingSize(pagingSize).build();
 		
 		List<HBoardVO> lst = null;
 		try {
-			Map<String, Object> result = service.getAllBoard(dto);
-			lst = (List<HBoardVO>) result.get("boardList");
-			PagingInfo pi = (PagingInfo) result.get("pagingInfo");
+			Map<String, Object> resultMap = service.getAllBoard(dto, searchCriteriaDTO);
+			lst = (List<HBoardVO>) resultMap.get("boardList");
+			PagingInfo pi = (PagingInfo) resultMap.get("pagingInfo");
+//			lst = (List<HBoardVO>) result.get("boardList");
+//			PagingInfo pi = (PagingInfo) result.get("pagingInfo");
 			model.addAttribute("status", "success");
 			model.addAttribute("boardList", lst); // model 객체에 데이터 바인딩
 			model.addAttribute("pagingInfo", pi);
+			model.addAttribute("search", searchCriteriaDTO);
 		} catch (Exception e) {
 			e.printStackTrace();
 			model.addAttribute("exception", "error");

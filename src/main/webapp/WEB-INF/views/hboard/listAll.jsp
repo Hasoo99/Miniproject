@@ -20,8 +20,14 @@
 	display: flex;
 	justify-content: center;
 }
+
 .boardControl {
 	width: 150px;
+}
+
+.noContent {
+	display: flex;
+	justify-content: center;
 }
 </style>
 	<script>
@@ -29,7 +35,34 @@
 		let now = new Date();
 //		alert('${status}');
 //		alert('${msg}');
-		timediffPostDate()
+		console.log('${boardList }');
+		timediffPostDate();
+		
+		
+		// pagingSize
+		/* let pagingSize = '${param.pagingSize}';
+		if(pagingSize = '') {
+			pagingSize = 10;
+		} else {
+			pagingSize = parseInt(pagingSize);
+		}
+		// 유저가 페이징사이즈를 선택하면
+		 $(".pagingSize").change(function() {
+			console.log($(this).val());
+			
+			let pageNo = '${param.pageNo}';
+			
+			
+			if(pageNo == '') {
+				pageNo = 1;
+			} else {
+				pageNo = parseInt(pageNo);				
+			}
+			location.href='/hboard/listAll?pagingSize=' + $(this).val() + "&pageNo=" + pageNo;
+		});  */
+		
+		
+		
 //		replyIcon()
 		showModal();
 		$(".modalCloseBtn").click(function() {
@@ -111,7 +144,7 @@
 	function pagingSizeChange(obj) {
 		//console.log(obj.value);
 		let pagingSize = obj.value;
-		location.href="/hboard/listAll?pageNo=" + "1" + "&pagingSize=" + pagingSize;
+		location.href="/hboard/listAll?pageNo=" + "1" + "&pagingSize=" + pagingSize + "&searchWord=" + "${param.searchWord}" + "&searchType=" + "${param.searchType}"
 	}
 	
 	
@@ -121,25 +154,33 @@
 		<h1>계층형 게시판 전체 목록</h1>
 
 		<div class="boardControl">
-			<select class="form-select pagingSizeChange" onchange="pagingSizeChange(this);">			
+			<select class="form-select pagingSize"
+				onchange="pagingSizeChange(this);">
 				<option value="${pagingInfo.viewPostCntperPage }">선택</option>
 				<option value="10">10개씩 보기</option>
 				<option value="20">20개씩 보기</option>
 				<option value="40">40개씩 보기</option>
 				<option value="80">80개씩 보기</option>
-			</select>
-			<input type="text" value="${pagingInfo.viewPostCntperPage }개씩 보기" disabled>
+			</select> <input type="text" value="${pagingInfo.viewPostCntperPage }개씩 보기"
+				disabled>
 		</div>
 
 		<table class="table table-hover">
 			<thead>
-				<tr>
-					<th>#</th>
-					<th>글제목</th>
-					<th>작성자</th>
-					<th>작성일</th>
-					<th>조회수</th>
-				</tr>
+				<c:if test="${pagingInfo.totalPostCnt != 0 }">
+					<tr>
+						<th>#</th>
+						<th>글제목</th>
+						<th>작성자</th>
+						<th>작성일</th>
+						<th>조회수</th>
+					</tr>
+				</c:if>
+				<c:if test="${pagingInfo.totalPostCnt == 0 }">
+					<div class="noContent">
+						<img src="/resources/images/noContent.png">
+					</div>
+				</c:if>
 			</thead>
 			<tbody>
 				<c:forEach var="board" items="${boardList }">
@@ -178,35 +219,54 @@
 				onclick="location.href='/hboard/saveBoard';">글쓰기</button>
 		</div>
 
+		<!-- 검색 -->
+
+		<form action="/hboard/listAll" method="post">
+			<select class="form-select" id="searchType" name="searchType">
+				<option value="">--검색 타입--</option>
+				<option value="title">제목</option>
+				<option value="writer">작성자</option>
+				<option value="content">내용</option>
+			</select>
+			<div class="input-group mb-3">
+				<input type="text" class="form-control" placeholder="검색어를 입력하세요...."
+					id="searchWord" name="searchWord">
+				<button type="submit" class="btn btn-success">검색</button>
+			</div>
+		</form>
+		<div>${boardList }</div>
+		<!-- 페이지네이션 -->
+
 		<div>${pagingInfo }</div>
+		<div>${search }</div>
 		<div class="paging">
 			<ul class="pagination">
 				<c:if test="${pagingInfo.pageNo == 1 }">
-					<li class="page-item disabled" ><a class="page-link" href="#">Previous</a></li>
+					<li class="page-item disabled"><a class="page-link" href="#">Previous</a></li>
 				</c:if>
 				<c:if test="${pagingInfo.pageNo > 1 }">
 					<li class="page-item"><a class="page-link"
-						href="/hboard/listAll?pageNo=${pagingInfo.pageNo - 1 }&pagingSize=${pagingInfo.viewPostCntperPage }">Previous</a></li>
+						href="/hboard/listAll?pageNo=${pagingInfo.pageNo - 1 }&pagingSize=${pagingInfo.viewPostCntperPage }&searchWord=${param.searchWord }&searchType=${param.searchType }">Previous</a></li>
 				</c:if>
 
 				<c:forEach var="i" begin='${pagingInfo.startPageNoCurBlock }'
 					end='${pagingInfo.endPageNoCurBlock }'>
 					<c:if test="${pagingInfo.pageNo == i}">
-					<li class="page-item active"><a class="page-link"
-						href="/hboard/listAll?pageNo=${i }&pagingSize=${pagingInfo.viewPostCntperPage }">${i }</a></li>
+						<li class="page-item active"><a class="page-link"
+							href="/hboard/listAll?pageNo=${i }&pagingSize=${pagingInfo.viewPostCntperPage }&searchWord=${param.searchWord }&searchType=${param.searchType }">${i }</a></li>
 					</c:if>
 					<c:if test="${pagingInfo.pageNo != i}">
-					<li class="page-item"><a class="page-link"
-						href="/hboard/listAll?pageNo=${i }&pagingSize=${pagingInfo.viewPostCntperPage }">${i }</a></li>
+						<li class="page-item"><a class="page-link"
+							href="/hboard/listAll?pageNo=${i }&pagingSize=${pagingInfo.viewPostCntperPage }&searchWord=${param.searchWord }&searchType=${param.searchType }">${i }</a></li>
 					</c:if>
 				</c:forEach>
 
 				<c:if test="${pagingInfo.pageNo < pagingInfo.totalPageCnt }">
 					<li class="page-item"><a class="page-link"
-						href="/hboard/listAll?pageNo=${pagingInfo.pageNo + 1 }&pagingSize=${pagingInfo.viewPostCntperPage }">Next</a></li>
+						href="/hboard/listAll?pageNo=${pagingInfo.pageNo + 1 }&pagingSize=${pagingInfo.viewPostCntperPage }&searchWord=${param.searchWord }&searchType=${param.searchType }">Next</a></li>
 				</c:if>
 				<c:if test="${pagingInfo.pageNo == pagingInfo.totalPageCnt }">
-					<li class="page-item disabled" ><a class="page-link" href="#">Next</a></li>
+					<li class="page-item disabled"><a class="page-link" href="#">Next</a></li>
 				</c:if>
 			</ul>
 		</div>

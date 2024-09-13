@@ -268,3 +268,13 @@ select count(*) from hboard; -- 351
 -- 마지막 36페이지
 -- 4번 블럭 : 31번 ~ 40번
 
+
+-- 게시판 검색어 ----------------------------------
+-- title로 검색
+select * from hboard where title like '%테스트%';
+
+-- writer로 검색
+select * from hboard where writer like '%tomoong%';
+
+-- content로 검색
+select * from hboard where content like '%테스트%';
