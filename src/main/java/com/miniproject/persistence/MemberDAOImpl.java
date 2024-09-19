@@ -19,4 +19,9 @@ public class MemberDAOImpl implements MemberDAO{
 		return ses.update(ns + "updateUserPoint", userId);
 	}
 
+	@Override
+	public int selectDuplicateId(String tmpUserId) throws Exception {
+		return ses.selectOne(ns+"selectUserId", tmpUserId);
+	}
+
 }

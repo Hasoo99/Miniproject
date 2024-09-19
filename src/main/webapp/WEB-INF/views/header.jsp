@@ -29,7 +29,8 @@
 				<li class="nav-item"><a class="nav-link active" href="/">weblch</a>
 				</li>
 				<li class="nav-item"><a class="nav-link" href="/hboard/listAll">계층형 게시판</a></li>
-				<li class="nav-item"><a class="nav-link" href="#">Link</a></li>
+				<li class="nav-item"><a class="nav-link" href="/member/register">회원가입</a></li>
+				<li class="nav-item"><a class="nav-link" href="#">로그인</a></li>
 				<li class="nav-item"><a class="nav-link disabled" href="#">Disabled</a>
 				</li>
 			</ul>

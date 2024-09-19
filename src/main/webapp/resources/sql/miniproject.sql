@@ -278,3 +278,9 @@ select * from hboard where writer like '%tomoong%';
 
 -- content로 검색
 select * from hboard where content like '%테스트%';
+
+
+-- ----------------------회원가입------------------------------
+-- 아이디 중복 검사 쿼리문
+-- tmpUserId
+select count(*) from member where userId = 'abcd'; -- 0 : 중복 안됨 

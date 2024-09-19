@@ -22,3 +22,6 @@ local.properties
 
 # PyDev specific (Python IDE for Eclipse)
 *.pydevproject
+
+# Ignore config.properties
+config.properties

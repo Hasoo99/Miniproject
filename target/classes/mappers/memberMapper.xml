@@ -14,5 +14,11 @@
 		pointwhy = '글작성')
 		where userId = #{userId}
 	</update>
+	
+	<!-- 아이디 중복체크 -->
+	<select id="selectUserId" resultType="int">
+		select count(*) from member where userId = #{tmpUserId}
+	</select>
+
 
 </mapper>
