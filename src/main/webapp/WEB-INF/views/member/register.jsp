@@ -201,11 +201,31 @@
 		let authDiv = "<div class='authenticateDiv'>";
 		authDiv += `<input type='text' class="form-control" id="userAuthCode"
 			placeholder="인증번호를 입력하세요...">`;
-			authDiv += `<button type="button" id="authBtn" class="btn btn-info">인증하기</button>`;
+			authDiv += `<button type="button" id="authBtn" onclick="checkAuthCode();" class="btn btn-info">인증하기</button>`;
 			authDiv += `</div>`;
 			
 			$(authDiv).insertAfter("#email");
 	}
+
+	function checkAuthCode() {
+		let userAuthCode = $("#userAuthCode").val();
+		$.ajax({
+	          url: "/member/checkAuthCode", // 데이터가 송수신될 서버의 주소
+	          type: "POST", // 통신 방식 (GET, POST, PUT, DELETE)
+	          dataType: "text", // 수신 받을 데이터 타입 (MIME TYPE)
+	          data: {
+	        	  "tmpUserAuthCode" : userAuthCode
+	          }, // 보낼 데이터
+	          success: function (data) {
+	            // 통신이 성공하면 수행할 함수
+	            console.log(data);
+	            
+	          },
+	          error: function () {},
+	          complete: function () {},
+	        });
+		
+	}	
 	
 	function callSendMail() {
 		$.ajax({
@@ -218,6 +238,10 @@
 	          success: function (data) {
 	            // 통신이 성공하면 수행할 함수
 	            console.log(data);
+	            if(data == 'success') {
+	            	alert("이메일로 인증번호를 발송했습니다. \n인증번호를 입력하세요.");
+	            	$("#userAuthCode").focus();
+	            }
 	          },
 	          error: function () {},
 	          complete: function () {},

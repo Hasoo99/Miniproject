@@ -59,8 +59,9 @@ public class SendMailService {
 		getAccount();
 
 		// 세션 생성
-		Session mailSession = Session.getDefaultInstance(props, new Authenticator() {
-
+//		Session mailSession = Session.getDefaultInstance(props, new Authenticator() {
+		Session mailSession = Session.getInstance(props, new Authenticator() {
+			
 			@Override
 			protected javax.mail.PasswordAuthentication getPasswordAuthentication() {
 				return new javax.mail.PasswordAuthentication(username, password);
@@ -77,12 +78,16 @@ public class SendMailService {
 			mime.addRecipient(RecipientType.TO, new InternetAddress(emailAddr)); // 받는 사람의 메일 주소
 
 			mime.setSubject(subject); // 메일 제목
-			mime.setText(message); // 메일 본문
+//			mime.setText(message); // 메일 본문
+			
+			String html ="<h1>회원가입을 환영합니다</h1>";
+			html += "<h2>메일 인증코드 : " + activationCode + "를 입력하시고 회원가입을 완료하세요.</h2>";
+			mime.setText(html, "utf-8", "html");;
 
 			// 로그 추가
-			System.out.println("Sending email to " + emailAddr);
+			System.out.println("이메일을 보냅니다. " + emailAddr);
 			Transport.send(mime); // 메일 발송
-			System.out.println("Email sent successfully to " + emailAddr);
+			System.out.println("이메일 전송 완료. " + emailAddr);
 		}
 
 	}
