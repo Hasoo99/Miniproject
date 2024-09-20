@@ -18,7 +18,8 @@ public class PointLogDAOImpl implements PointLogDAO{
 	@Override
 	public int insertPointLog(PointLogDTO pointLogDTO) throws Exception {
 
-		return ses.insert(ns + "insertPointLog", pointLogDTO);
+//		return ses.insert(ns + "insertPointLog", pointLogDTO);
+		return ses.insert(ns + "insertPointLogSelectKey", pointLogDTO);
 	}
 
 }

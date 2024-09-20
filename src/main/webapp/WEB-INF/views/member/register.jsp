@@ -13,6 +13,12 @@
 	src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 <script src="http://code.jquery.com/jquery-latest.min.js"></script>
 <title>회원가입</title>
+<style type="text/css">
+.hobbies {
+	display: flex;
+	flex-direction: row;
+}
+</style>
 <script type="text/javascript">
 	$(function() {
 		// 아이디 이벤트
@@ -99,16 +105,34 @@
 		let genderCheck = genderValid();
 		let mobileCheck = mobileValid();
 		let emailCheck = emailValid();
+		let imgCheck = imgValid();
 
 		// 동의 항목 체크했다면
-		if (idCheck && pwdCheck && genderCheck && mobileCheck) {
+		let agreeCheck = $("#agree").is(":checked");
+		console.log("동의항목 체크 : " + agreeCheck);
+		if (agreeCheck == false) {
+			alert("약관 동의가 필요합니다.");
+			result = false;
+		}
+		
+		
+		if (idCheck && pwdCheck && genderCheck && mobileCheck && emailCheck && imgCheck) {
 			result = true;
 			console.log(result);
 		} else {
 			result = false;
 			console.log(result);
 		}
-		return false;
+		return result;
+	}
+	
+	function imgValid() {
+		let result = false;
+		let userImg = $("#userImg").val();
+		if($("#imgCheck").val() == 'checked' || userImg == '') {
+			result = true;
+		}
+		return result;
 	}
 	
 	function idValid() {
@@ -136,6 +160,8 @@
 		
 		if($("#pwdValid").val() == "checked") {
 			result = true;
+		} else {
+			outputError("비밀번호는 필수 항목입니다", $("#userPwd1"), "red");
 		}
 		return result;
 	}
@@ -185,6 +211,7 @@
 		if(!emailRegExp.test(tmpUserEmail)) {
 			outputError("이메일 주소 형식이 아닙니다", $("#email"), "red");
 		} else {
+			// 이메일 중복체크도 해야 한다!
 			if($("#emailValid").val() == 'checked') {
 				result = true;
 			} else {
@@ -193,6 +220,7 @@
 				outputError("인증메일을 발송했습니다.", $("#email"), "green");
 			}
 		}
+		return result;
 	}
 	
 	function showAuthenticateDiv() {
@@ -219,7 +247,16 @@
 	          success: function (data) {
 	            // 통신이 성공하면 수행할 함수
 	            console.log(data);
-	            
+	            if(data == "success") {
+	            	outputError("인증완료", $("#email"), "blue");
+	            	$("#email").attr("readonly", true);
+	            	$(".authenticateDiv").remove();
+	            	$("#emailValid").val("checked");
+	            } else if (data == "fail"){
+	            	alert("인증실패");
+	            	outputError("인증코드가 일치하지 않습니다.", $("#email"), "red");
+	            	$("#emailValid").val("");
+	            }
 	          },
 	          error: function () {},
 	          complete: function () {},
@@ -247,6 +284,37 @@
 	          complete: function () {},
 	        });
 	}
+	
+	function showPreview(obj) {
+		// 이미지 파일만 통과.
+		if(obj.files[0].size > 1024*1024*10) { // 10MB
+			alert("10MB이하의 파일만 업로드할 수 있습니다");
+			obj.value='';
+			return;
+		}
+		
+		// 파일 타입 확인
+		let imageType = ["image/jpeg", "image/png", "image/gif", "image/jpg"];
+		let fileType = obj.files[0].type;
+		let fileName = obj.files[0].name;
+		console.log(fileType);
+		
+		if(imageType.indexOf(fileType) != -1) { // 이미지 파일이라면
+			let reader = new FileReader(); //FileReader객체 생성
+			reader.readAsDataURL(obj.files[0]); // 업로드된 파일을 읽어온다.
+			reader.onload = function(e) {
+				// reader객체에 의해 파일을 읽기 완료하면 실행되는 콜백함수
+				console.log(e.target);
+				let imgTag = `<div style='padding: 60px;'><img src='\${e.target.result}' width='50px'/><span>\${fileName}</span></div>`;
+				$(imgTag).insertAfter(obj);
+			}
+			outputError("이미지파일 입니다", obj, "blue");
+			$("#imgCheck").val("checked");
+		} else { // 이미지 파일이 아니라면
+			outputError("이미지파일만 올릴 수 있습니다.", obj, "red");
+		$(obj.val(""));
+		}
+	}
 </script>
 </head>
 <body>
@@ -254,7 +322,7 @@
 	<div class="container">
 		<h1>회원가입 페이지</h1>
 
-		<form action="/member/register" method="post">
+		<form action="/member/register" method="post" enctype="multipart/form-data">
 
 			<div class="mb-3 mt-3">
 				<label for="userId" class="form-label">아이디:</label><span></span> <input
@@ -309,13 +377,28 @@
 			</div>
 			<input type="hidden" id="emailValid">
 
-			<div class="mb-3 mt-3">
-				<!-- 취미 -->
+			<!-- 취미 -->
+			<div class="form-check mb-3 mt-3">
+				<div>취미 :</div>
+				<div class="hobbies">
+					<span><input class="form-check-input" type="checkbox"
+						id="check1" name="hobbies" value="sleep">낮잠</span> <span><input
+						class="form-check-input" type="checkbox" id="check1" name="hobbies"
+						value="reading">독서 </span><span> <input
+						class="form-check-input" type="checkbox" id="check1" name="hobbies"
+						value="coding">코딩
+					</span><span> <input class="form-check-input" type="checkbox"
+						id="check1" name="hobbies" value="game">게임
+					</span>
+				</div>
 			</div>
 
+			<!-- 유저 프로필 사진 -->
 			<div class="mb-3 mt-3">
-				<!-- 유저 프로필 사진 -->
+				<label class="form-check-label">회원 프로필 사진:</label>
+				<input type="file" class="form-control" name="userProfile" id="userImg" onchange="showPreview(this);"/>
 			</div>
+			<input type="hidden" id="imgCheck"/>
 
 			<div class="form-check">
 				<input class="form-	check-input" type="checkbox" id="agree"

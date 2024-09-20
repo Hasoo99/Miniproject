@@ -284,3 +284,13 @@ select * from hboard where content like '%테스트%';
 -- 아이디 중복 검사 쿼리문
 -- tmpUserId
 select count(*) from member where userId = 'abcd'; -- 0 : 중복 안됨 
+
+
+
+-- 회원가입 쿼리문
+-- 프로필 사진을 올렸을 때
+insert into member (userId, userPwd, userName, gender, mobile, email, hobby ,userImg)
+values(?, sha1(md5(?)), ?, ?, ?, ?, ?, ?);
+-- 프로필 사진을 올리지 않은 경우
+insert into member (userId, userPwd, userName, gender, mobile, email, hobby)
+values(?, sha1(md5(?)), ?, ?, ?, ?, ?);

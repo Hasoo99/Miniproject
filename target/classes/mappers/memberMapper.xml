@@ -10,15 +10,39 @@
 
 	<update id="updateUserPoint">
 		update member
-		set userPoint = userPoint + (select pointScore from pointdef where
+		set userPoint = userPoint + (select
+		pointScore from pointdef where
 		pointwhy = '글작성')
-		where userId = #{userId}
+		where userId =
+		#{userId}
 	</update>
-	
+
 	<!-- 아이디 중복체크 -->
 	<select id="selectUserId" resultType="int">
-		select count(*) from member where userId = #{tmpUserId}
+		select count(*) from member
+		where userId = #{tmpUserId}
 	</select>
 
+	<!-- 회원가입 쿼리문 -->
+	<insert id="insertMember">
+		insert into member
+		<if test="userImg != null">
+			(userId, userPwd, userName, gender,
+			mobile, email, hobby
+			,userImg)
+			values(#{userId},
+			sha1(md5(#{userPwd1})), #{userName},
+			#{gender}, #{mobile}, #{email},
+			#{hobby}, #{userImg})
+		</if>
+		<if test="userImg == null">
+			(userId, userPwd, userName, gender,
+			mobile, email,
+			hobby)
+			values(#{userId}, sha1(md5(#{userPwd1})),
+			#{userName}, #{gender},
+			#{mobile}, #{email}, #{hobby})
+		</if>
+	</insert>
 
 </mapper>

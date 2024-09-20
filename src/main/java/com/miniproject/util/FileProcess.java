@@ -205,4 +205,13 @@ public class FileProcess {
 		return result;
 	}
 
+	public void saveUserProfile(byte[] bytes, String realPath, String fileName) throws IOException {
+//		File fileToSave = new File(saveFilePath + File.separator + newFileName);
+//		FileUtils.writeByteArrayToFile(fileToSave, upfile); // 실제 파일 저장
+		// 회원가입시 업로드된 유저 프로필 저장하는 메서드
+		File saveFile = new File(realPath + File.separator + fileName);
+		FileUtils.writeByteArrayToFile(saveFile, bytes);
+		
+	}
+
 }

@@ -5,6 +5,8 @@ import javax.inject.Inject;
 import org.apache.ibatis.session.SqlSession;
 import org.springframework.stereotype.Repository;
 
+import com.miniproject.model.MemberDTO;
+
 @Repository
 public class MemberDAOImpl implements MemberDAO{
 
@@ -22,6 +24,11 @@ public class MemberDAOImpl implements MemberDAO{
 	@Override
 	public int selectDuplicateId(String tmpUserId) throws Exception {
 		return ses.selectOne(ns+"selectUserId", tmpUserId);
+	}
+
+	@Override
+	public int insertMember(MemberDTO registerMember) {
+		return ses.insert(ns + "insertMember", registerMember);
 	}
 
 }

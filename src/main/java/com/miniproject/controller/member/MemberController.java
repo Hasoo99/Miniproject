@@ -6,6 +6,7 @@ import java.util.UUID;
 import javax.inject.Inject;
 import javax.mail.MessagingException;
 import javax.mail.internet.AddressException;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import org.apache.catalina.connector.Response;
@@ -16,10 +17,15 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import com.miniproject.model.MemberDTO;
 import com.miniproject.model.MyResponseWithoutData;
 import com.miniproject.service.member.MemberService;
+import com.miniproject.util.FileProcess;
 import com.miniproject.util.SendMailService;
+import com.mysql.cj.util.StringUtils;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -31,13 +37,55 @@ public class MemberController {
 	@Inject
 	private MemberService mService;
 
+	@Inject
+	private FileProcess fp;
+	
 	@RequestMapping("/register")
 	public void showRegisterForm() {
 	}
 
 	@RequestMapping(value = "/register", method = RequestMethod.POST)
-	public void registerMember() {
-
+	public String registerMember(MemberDTO registerMember, MultipartFile userProfile, HttpServletRequest request, RedirectAttributes rttr) {
+		
+		
+		System.out.println("회원 가입 진행하자. " + registerMember.toString());
+		System.out.println(userProfile.getOriginalFilename());
+		
+		String resultPage = "redirect:/"; // 회원가입 완료 후 index.jsp로 가자
+		
+		String realPath = request.getSession().getServletContext().getRealPath("/resources/userImg");
+		System.out.println("실제 파일 경로 : " + realPath);
+		
+		String tmpUserProfileName = userProfile.getOriginalFilename();
+		
+		if(!StringUtils.isNullOrEmpty(tmpUserProfileName)) {
+			String ext = tmpUserProfileName.substring(tmpUserProfileName.lastIndexOf(".")+1);
+			registerMember.setUserImg(registerMember.getUserId()+"."+ext);
+		}
+		
+		try {
+			if(mService.saveMember(registerMember)) { // DB에 저장
+				
+				rttr.addAttribute("status", "success");
+				
+				// 프로필을 올렸는지 확인 -> 프로필 사진을 업로드 했다면
+				if(!StringUtils.isNullOrEmpty(tmpUserProfileName)) {
+					fp.saveUserProfile(userProfile.getBytes(), realPath, registerMember.getUserImg());
+				}
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			// IOException
+			if(e instanceof IOException) { // IOException이라면
+				// 회원가입한 유저의 회원가입 취소 처리 (service-dao)
+				rttr.addAttribute("status", "fileFail");
+			} else {
+				rttr.addAttribute("status", "fail");
+			}
+			
+			resultPage = "redirect:/member/register"; // 실패한 경우 -> 다시 회원가입 페이지로
+		}
+		return resultPage;
 	}
 
 	@RequestMapping(value = "/isDuplicate", method = RequestMethod.POST)
