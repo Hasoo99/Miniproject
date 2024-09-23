@@ -1,5 +1,6 @@
 package com.miniproject.persistence;
 
+import com.miniproject.model.LoginDTO;
 import com.miniproject.model.MemberDTO;
 
 public interface MemberDAO {
@@ -11,4 +12,7 @@ public interface MemberDAO {
 
 	// 회원가입
 	int insertMember(MemberDTO registerMember);
+
+	// 로그인
+	MemberDTO login(LoginDTO loginDTO);
 }

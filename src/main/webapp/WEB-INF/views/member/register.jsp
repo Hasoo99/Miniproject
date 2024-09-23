@@ -17,6 +17,18 @@
 .hobbies {
 	display: flex;
 	flex-direction: row;
+	gap: 30px;
+	//
+	항목
+	간의
+	간격
+	align-items
+	:
+	center;
+	//
+	수직
+	중앙
+	정렬
 }
 </style>
 <script type="text/javascript">
@@ -217,10 +229,55 @@
 			} else {
 				showAuthenticateDiv(); // 인증번호를 입력하는 div를 보여준다
 				callSendMail(); // 이메일 발송
-				outputError("인증메일을 발송했습니다.", $("#email"), "green");
+				startTimer(); // 타이머 동작
+				outputError("이메일 주소 형식 확인", $("#email"), "green");
 			}
 		}
 		return result;
+	}
+	
+	function startTimer() {
+		let timer = 10; // 초 단위
+		
+		// 1초마다 displayTime() 실행
+		let timerInterval = setInterval(displayTime, 1000);
+		
+		function displayTime() {
+			// 3:00
+			if(timer < 0) {
+			// 시간 만료 : 타이머 해제
+			//	alert("인증 시간이 만료되었습니다.");
+			clearInterval(timerInterval);
+			$("#authBtn").prop("disabled", true);
+			
+			// 백엔드에 인증시간이 만료되었음을 알려야 한다.
+			if($("#emailValid").val() != "checked") {
+			$.ajax({
+		          url: "/member/clearAuthCode", // 데이터가 송수신될 서버의 주소
+		          type: "POST", // 통신 방식 (GET, POST, PUT, DELETE)
+		          dataType: "text", // 수신 받을 데이터 타입 (MIME TYPE)
+		          success: function (data) {
+		        	  console.log(data);
+		            // 통신이 성공하면 수행할 함수
+		            if(data == "success") {
+		            	alert("인증시간이 만료되었습니다. 이메일 주소를 다시 입력해주세요.");
+		            	$(".authenticateDiv").remove();
+		            	$("#email").val("");
+		            	$("#email").focus();
+		            }
+		          },
+		          error: function () {},
+		          complete: function () {},
+		        });
+			} else {
+				let min = Math.floor(timer / 60); //분
+				let sec = String(timer % 60).padStart(2, "0"); //초
+				let remainTime = min + ":" + sec; // 분:초
+				$(".timer").html(remainTime);
+				-- timer;
+			}
+			}
+		}
 	}
 	
 	function showAuthenticateDiv() {
@@ -229,6 +286,7 @@
 		let authDiv = "<div class='authenticateDiv'>";
 		authDiv += `<input type='text' class="form-control" id="userAuthCode"
 			placeholder="인증번호를 입력하세요...">`;
+			authDiv += `<span class="timer">3:00</span>`;
 			authDiv += `<button type="button" id="authBtn" onclick="checkAuthCode();" class="btn btn-info">인증하기</button>`;
 			authDiv += `</div>`;
 			
@@ -322,7 +380,8 @@
 	<div class="container">
 		<h1>회원가입 페이지</h1>
 
-		<form action="/member/register" method="post" enctype="multipart/form-data">
+		<form action="/member/register" method="post"
+			enctype="multipart/form-data">
 
 			<div class="mb-3 mt-3">
 				<label for="userId" class="form-label">아이디:</label><span></span> <input
@@ -383,10 +442,10 @@
 				<div class="hobbies">
 					<span><input class="form-check-input" type="checkbox"
 						id="check1" name="hobbies" value="sleep">낮잠</span> <span><input
-						class="form-check-input" type="checkbox" id="check1" name="hobbies"
-						value="reading">독서 </span><span> <input
-						class="form-check-input" type="checkbox" id="check1" name="hobbies"
-						value="coding">코딩
+						class="form-check-input" type="checkbox" id="check1"
+						name="hobbies" value="reading">독서 </span><span> <input
+						class="form-check-input" type="checkbox" id="check1"
+						name="hobbies" value="coding">코딩
 					</span><span> <input class="form-check-input" type="checkbox"
 						id="check1" name="hobbies" value="game">게임
 					</span>
@@ -395,10 +454,11 @@
 
 			<!-- 유저 프로필 사진 -->
 			<div class="mb-3 mt-3">
-				<label class="form-check-label">회원 프로필 사진:</label>
-				<input type="file" class="form-control" name="userProfile" id="userImg" onchange="showPreview(this);"/>
+				<label class="form-check-label">회원 프로필 사진:</label> <input
+					type="file" class="form-control" name="userProfile" id="userImg"
+					onchange="showPreview(this);" />
 			</div>
-			<input type="hidden" id="imgCheck"/>
+			<input type="hidden" id="imgCheck" />
 
 			<div class="form-check">
 				<input class="form-	check-input" type="checkbox" id="agree"

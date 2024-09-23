@@ -36,4 +36,14 @@ public class HomeController {
 		return "index";
 	}
 	
+	@RequestMapping(value="/exampleInterceptor")
+	public void examInterceptor() {
+		logger.info("examInterceptor() 호출!!!");
+	}
+	
+	@RequestMapping(value="/example")
+	public void testInterceptors() {
+		logger.info("testInterceptors() 호출!!!");
+	}
+	
 }

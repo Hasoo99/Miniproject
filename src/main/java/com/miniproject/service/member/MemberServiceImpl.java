@@ -7,6 +7,7 @@ import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.miniproject.model.LoginDTO;
 import com.miniproject.model.MemberDTO;
 import com.miniproject.model.PointLogDTO;
 import com.miniproject.persistence.MemberDAO;
@@ -62,6 +63,12 @@ public class MemberServiceImpl implements MemberService{
 		
 		return result;
 		
+	}
+
+	@Override
+	public MemberDTO login(LoginDTO loginDTO) throws Exception {
+		MemberDTO loginMember = mDao.login(loginDTO);
+		return loginMember;
 	}
 
 }

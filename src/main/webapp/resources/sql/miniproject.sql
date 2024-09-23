@@ -294,3 +294,6 @@ values(?, sha1(md5(?)), ?, ?, ?, ?, ?, ?);
 -- 프로필 사진을 올리지 않은 경우
 insert into member (userId, userPwd, userName, gender, mobile, email, hobby)
 values(?, sha1(md5(?)), ?, ?, ?, ?, ?);
+
+-- 로그인
+select * from member where userId = 'tosimi' and userPwd = sha1(md5('1234'));
