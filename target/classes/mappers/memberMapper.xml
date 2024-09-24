@@ -48,7 +48,21 @@
 	<!-- 로그인 -->
 
 	<select id="loginWithLoginDTO" resultType="MemberDTO">
-		select * from member where userId = #{userId} and userPwd = sha1(md5(#{userPwd1}))
+		select * from member
+		where userId = #{userId} and userPwd = sha1(md5(#{userPwd1}))
+	</select>
+
+	<!-- 자동로그인 정보 저장 -->
+
+	<update id="updateAutoLoginInfo">
+		update member set sesid = #{sesId}, allimit =
+		#{allimit} where userId = #{userId}
+	</update>
+
+	<!-- 자동로그인 유저 확인 쿼리문 -->
+	<select id="checkAutoLoginUser" resultType="MemberDTO">
+		select * from member where sesid = #{sesId} and
+		allimit > now()
 	</select>
 
 </mapper>

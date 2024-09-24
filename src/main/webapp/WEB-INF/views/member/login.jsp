@@ -13,6 +13,13 @@
 	src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 <script src="http://code.jquery.com/jquery-latest.min.js"></script>
 <title>Insert title here</title>
+<script type="text/javascript">
+	$(function() {
+		$("#remember").click(function () {
+			alert("자동로그인은 공공장소에서 사용하지 않는 것을 권고합니다");
+		});
+	});
+</script>
 </head>
 <body>
 	<jsp:include page="../header.jsp"></jsp:include>
@@ -32,6 +39,13 @@
 				<input type="password" class="form-control" id="userPwd1"
 					placeholder="비밀번호를 입력하세요..." name="userPwd1">
 			</div>
+			<div class="form-check">
+				<input class="form-check-input" type="checkbox" id="remember"
+					name="remember"> <label
+					class="form-check-label">Remember me</label>
+			</div>
+
+
 			<button type="submit" class="btn btn-success">로그인</button>
 			<button type="reset" class="btn btn-secondary">취소</button>
 		</form>

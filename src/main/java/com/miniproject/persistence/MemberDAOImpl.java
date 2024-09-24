@@ -5,6 +5,7 @@ import javax.inject.Inject;
 import org.apache.ibatis.session.SqlSession;
 import org.springframework.stereotype.Repository;
 
+import com.miniproject.model.AutoLoginDTO;
 import com.miniproject.model.LoginDTO;
 import com.miniproject.model.MemberDTO;
 
@@ -35,6 +36,16 @@ public class MemberDAOImpl implements MemberDAO{
 	@Override
 	public MemberDTO login(LoginDTO loginDTO) {
 		return ses.selectOne(ns + "loginWithLoginDTO", loginDTO);
+	}
+
+	@Override
+	public int updateAutoLoginInfo(AutoLoginDTO autoLoginDTO) throws Exception {
+		return ses.update(ns + "updateAutoLoginInfo",autoLoginDTO);
+	}
+
+	@Override
+	public MemberDTO checkAutoLogin(String savedCookieSesId) throws Exception {
+		return ses.selectOne(ns + "checkAutoLoginUser", savedCookieSesId);
 	}
 
 }

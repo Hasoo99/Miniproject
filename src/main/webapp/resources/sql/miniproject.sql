@@ -297,3 +297,14 @@ values(?, sha1(md5(?)), ?, ?, ?, ?, ?);
 
 -- 로그인
 select * from member where userId = 'tosimi' and userPwd = sha1(md5('1234'));
+
+-- 자동 로그인
+ALTER TABLE `sky`.`member` 
+ADD COLUMN `sesid` VARCHAR(50) NULL AFTER `userPoint`,
+ADD COLUMN `allimit` DATETIME NULL AFTER `sesid`;
+
+-- 자동로그인 정보를 저장하는 쿼리문
+update member set sesid = #{sesId}, allimit = #{allimit} where userId = #{userId};
+
+-- 쿠키에 자동로그인을 체크한 유저를 자동로그인시키기 위한 유저 정보 조회
+select * from member where sesid = #{sesId};

@@ -7,6 +7,7 @@ import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.miniproject.model.AutoLoginDTO;
 import com.miniproject.model.LoginDTO;
 import com.miniproject.model.MemberDTO;
 import com.miniproject.model.PointLogDTO;
@@ -71,4 +72,20 @@ public class MemberServiceImpl implements MemberService{
 		return loginMember;
 	}
 
+	@Override
+	public boolean saveAutoLoginInfo(AutoLoginDTO autoLoginDTO) throws Exception{
+		boolean result = false;
+		if(mDao.updateAutoLoginInfo(autoLoginDTO)==1) {
+			result = true;
+		}
+		return result;
+	}
+
+	@Override
+	public MemberDTO checkAutoLogin(String savedCookieSesId) throws Exception {
+		return mDao.checkAutoLogin(savedCookieSesId);
+		
+	}
+
 }
+
