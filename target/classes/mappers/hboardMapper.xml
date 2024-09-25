@@ -215,19 +215,19 @@
 	<!-- 게시판 검색 -->
 	<select id="getSearchBoard"
 		resultType="com.miniproject.model.HBoardVO">
-		select * from hboard
+		select * from hboard where
 		<choose>
 			<when test="searchType == 'title'">
-				where title like #{searchWord}
+				title like #{searchWord} and
 			</when>
 			<when test="searchType == 'writer'">
-				where writer like #{searchWord}
+				writer like #{searchWord} and
 			</when>
 			<when test="searchType == 'content'">
-				where content like #{searchWord}
+				content like #{searchWord} and
 			</when>
 		</choose>
-		and boardType = 'hboard'
+		boardType = 'hboard'
 		order by ref desc, refOrder asc limit
 		#{startRowIndex},
 		#{viewPostCntperPage}
