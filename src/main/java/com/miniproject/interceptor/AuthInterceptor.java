@@ -81,8 +81,6 @@ public class AuthInterceptor extends HandlerInterceptorAdapter {
 					}
 				}
 				
-				
-				
 			}
 			goOriginPath = true;
 		}

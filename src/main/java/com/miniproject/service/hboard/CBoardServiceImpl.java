@@ -12,6 +12,7 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.miniproject.model.BoardDetailInfo;
+import com.miniproject.model.BoardUpFileStatus;
 import com.miniproject.model.BoardUpFilesVODTO;
 import com.miniproject.model.HBoardDTO;
 import com.miniproject.model.HBoardVO;
@@ -106,7 +107,7 @@ public class CBoardServiceImpl implements CBoardService {
 
 	private void updateReadCount(int boardNo, BoardDetailInfo boardInfo) {
 		if (hDao.updateReadCount(boardNo) == 1) {
-				boardInfo.setReadCount(boardInfo.getReadCount() + 1);
+			boardInfo.setReadCount(boardInfo.getReadCount() + 1);
 		}
 	}
 
@@ -129,9 +130,20 @@ public class CBoardServiceImpl implements CBoardService {
 	}
 
 	@Override
+	@Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.DEFAULT)
 	public boolean modifyBoard(HBoardDTO modifyBoard) throws Exception {
-		// TODO Auto-generated method stub
-		return false;
+		boolean result = false;
+
+		System.out.println(modifyBoard.toString());
+		System.out.println("씨다오 업데이트보드바이보드노 : "+cDao.updateBoardByBoardNo(modifyBoard));
+
+		// 1) 순수게시글 update
+		if (cDao.updateBoardByBoardNo(modifyBoard) == 1) {
+			
+			result = true;
+		}
+
+		return result;
 	}
 
 	@Override
@@ -145,12 +157,13 @@ public class CBoardServiceImpl implements CBoardService {
 		PagingInfo pi = makePagingInfo(dto, searchCriteriaDTO);
 		List<HBoardVO> lst = null;
 
-		if(StringUtils.isNullOrEmpty(searchCriteriaDTO.getSearchType()) && StringUtils.isNullOrEmpty(searchCriteriaDTO.getSearchWord())) {
+		if (StringUtils.isNullOrEmpty(searchCriteriaDTO.getSearchType())
+				&& StringUtils.isNullOrEmpty(searchCriteriaDTO.getSearchWord())) {
 			lst = cDao.selectAllBoard(pi);
 		} else {
-			lst = cDao.selectAllBoard(pi, searchCriteriaDTO);			
+			lst = cDao.selectAllBoard(pi, searchCriteriaDTO);
 		}
-		
+
 		Map<String, Object> resultMap = new HashMap<String, Object>();
 		resultMap.put("pagingInfo", pi);
 		resultMap.put("boardList", lst);

@@ -61,15 +61,15 @@ public class CboardController {
 	private CBoardService service;
 
 	@RequestMapping("/listAll") // "/hboard/listAll"
-	public void listAll(Model model, @RequestParam(value="pageNo", defaultValue = "1") int pageNo
-			, @RequestParam(value="pagingSize", defaultValue = "10") int pagingSize
-			, SearchCriteriaDTO searchCriteriaDTO) {
+	public void listAll(Model model, @RequestParam(value = "pageNo", defaultValue = "1") int pageNo,
+			@RequestParam(value = "pagingSize", defaultValue = "10") int pagingSize,
+			SearchCriteriaDTO searchCriteriaDTO) {
 		logger.info(pageNo + "번 페이지 출력...");
-		
+
 		logger.info(searchCriteriaDTO.toString());
 
 		PagingInfoDTO dto = PagingInfoDTO.builder().pageNo(pageNo).pagingSize(pagingSize).build();
-		
+
 		List<HBoardVO> lst = null;
 		try {
 			Map<String, Object> resultMap = service.getAllBoard(dto, searchCriteriaDTO);
@@ -166,8 +166,7 @@ public class CboardController {
 	}
 
 	@RequestMapping(value = "/modifyBoardSave", method = RequestMethod.POST)
-	public String modifyBoardSave(HBoardDTO modifyBoard, @RequestParam("modifyNewFile") MultipartFile[] modifyNewFile,
-			HttpServletRequest request, RedirectAttributes rttr) {
+	public String modifyBoardSave(HBoardDTO modifyBoard, HttpServletRequest request, RedirectAttributes rttr) {
 		System.out.println(modifyBoard.toString() + "를 수정 하자");
 
 		try {

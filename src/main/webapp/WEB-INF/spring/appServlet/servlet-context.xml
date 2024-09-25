@@ -83,6 +83,7 @@
 			<mapping path="/hboard/showReplyForm" /> <!-- 답글 작성(계층) -->	
 			
 			<mapping path="/cboard/showSaveBoardForm" /> <!-- 글작성(댓글) -->
+			<mapping path="/cboard/modifyBoard" /> <!-- 글수정(댓글) -->
 						
 			<beans:ref bean="authInterceptor" />
 		</interceptor>

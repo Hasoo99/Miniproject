@@ -93,12 +93,19 @@
 		<h1>댓글 수정</h1>
 		<form action="modifyBoardSave" method="post">
 			<div class="input-group mb-3">
+				<span class="input-group-text">글 번호</span> <input type="text"
+					class="form-control" name="boardNo" id="boardNo"
+					value="${board.boardNo }" readonly>
+			</div>
+			<div class="input-group mb-3">
 				<span class="input-group-text">글 제목</span> <input type="text"
-					class="form-control" name="title" id="title" value="${board.title }">
+					class="form-control" name="title" id="title"
+					value="${board.title }">
 			</div>
 			<div class="input-group mb-3">
 				<span class="input-group-text">작성자</span> <input type="text"
-					class="form-control" name="writer" value="${loginMember.userId }" readonly>
+					class="form-control" name="writer" value="${board.writer }"
+					readonly>
 			</div>
 
 			<!-- 내용 -->
@@ -110,7 +117,8 @@
 
 			<button class="btn btn-primary" type="submit"
 				onclick="return validBoard();">저장</button>
-			<button class="btn btn-danger" type="reset" onclick="location.href='/cboard/viewBoard?boardNo=${board.boardNo}';">취소</button>
+			<button class="btn btn-danger" type="reset"
+				onclick="location.href='/cboard/viewBoard?boardNo=${board.boardNo}';">취소</button>
 
 		</form>
 	</div>

@@ -128,8 +128,7 @@ public class CBoardDAOImpl implements CBoardDAO{
 
 	@Override
 	public int updateBoardByBoardNo(HBoardDTO modifyBoard) throws Exception {
-		// TODO Auto-generated method stub
-		return 0;
+		return ses.update(NS + "updateBoardByBoardNo", modifyBoard);
 	}
 
 	@Override
