@@ -227,7 +227,7 @@
 				where content like #{searchWord}
 			</when>
 		</choose>
-		where boardType = 'hboard'
+		and boardType = 'hboard'
 		order by ref desc, refOrder asc limit
 		#{startRowIndex},
 		#{viewPostCntperPage}
