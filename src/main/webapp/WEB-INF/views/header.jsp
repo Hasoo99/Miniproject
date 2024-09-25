@@ -25,8 +25,9 @@
 	height: 40px;
 	border-radius: 20px;
 }
+
 .userArea {
-	display:flex;
+	display: flex;
 	align-items: center;
 }
 </style>
@@ -44,6 +45,8 @@
 				</li>
 				<li class="nav-item"><a class="nav-link" href="/hboard/listAll">계층형
 						게시판</a></li>
+				<li class="nav-item"><a class="nav-link" href="/cboard/listAll">댓글형
+						게시판</a></li>
 
 				<c:choose>
 					<c:when test="${loginMember != null }">
@@ -51,7 +54,8 @@
 							href="/member/myPage"><img
 								src="/resources/userImg/${loginMember.userImg }"
 								class="userProfile"> <span class="userName">${loginMember.userName }님</span></a></li>
-						<li class="nav-item"><a class="nav-link" href="/member/logout">로그아웃</a></li>
+						<li class="nav-item"><a class="nav-link"
+							href="/member/logout">로그아웃</a></li>
 					</c:when>
 					<c:otherwise>
 						<li class="nav-item"><a class="nav-link"

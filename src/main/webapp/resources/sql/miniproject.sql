@@ -313,4 +313,23 @@ select * from member where sesid = #{sesId} and allimit > now();
 ALTER TABLE `sky`.`hboard` 
 ADD COLUMN `boardType` VARCHAR(10) NULL AFTER `isDelete`, COMMENT = '계층형게시판, 댓글형게시판' ;
 
-update hboard set boardType = 'hboard';
+update hboard set boardType = 'hboard' where boardNo <= 371;
+
+ALTER TABLE `sky`.`hboard` 
+CHANGE COLUMN `content` `content` LONGTEXT NULL DEFAULT NULL ;
+
+select h.boardNo, h.title, h.content, h.writer,
+		h.postDate,
+		h.readCount, h.ref, h.step, h.refOrder, h.isDelete,
+		m.userName,
+		m.email,
+		m.hobby
+		from
+		hboard h
+		inner
+		join member m
+		on h.writer = m.userId
+		where h.boardNo =
+		374
+		and
+		boardType = 'cboard'

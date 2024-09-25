@@ -7,11 +7,13 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 
 import com.miniproject.model.BoardDetailInfo;
 import com.miniproject.model.MemberDTO;
+import com.miniproject.service.hboard.CBoardService;
 import com.miniproject.service.hboard.HBoardService;
 import com.miniproject.util.DestinationPath;
 
@@ -27,6 +29,9 @@ public class AuthInterceptor extends HandlerInterceptorAdapter {
 
 	@Inject
 	private HBoardService service;
+	
+	@Autowired
+	private CBoardService cService;
 
 	@Override
 	public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler)
@@ -42,6 +47,7 @@ public class AuthInterceptor extends HandlerInterceptorAdapter {
 			log.info("preHandel() = [{}]", "로그인 하지 않았다");
 
 			response.sendRedirect("/member/login"); // -> 로그인페이지로 끌려감
+			
 		} else { // 로그인을 했다 -> 글작성 페이지로 이동
 			log.info("preHandel() = [{}]", "로그인 되어있다.");
 
@@ -51,16 +57,32 @@ public class AuthInterceptor extends HandlerInterceptorAdapter {
 
 			if (uri.contains("modify") || uri.contains("removeBoard")) { 
 				int boardNo = Integer.parseInt(request.getParameter("boardNo")); // 글번호
-				List<BoardDetailInfo> board = service.readBoard(boardNo); // boardNo번 글의 작성자 정보
 				MemberDTO loginMember = (MemberDTO) ses.getAttribute("loginMember"); // 로그인 유저 정보
-
-				if (!board.get(0).getWriter().equals(loginMember.getUserId())) {
-					response.sendRedirect("/hboard/viewBoard?status=authFail&boardNo=" + boardNo);
-					log.info("작성자와 로그인한 유저아이디가 다르므로 쫒겨남 ㅠㅠㅠ");
-					return false;
-				} else { // 작성자와 로그인한 유저가 같다면
-					goOriginPath = true;
+				
+				if (uri.contains("hboard")) {
+					// 계층형 게시판의 글수정/삭제의 경우
+					List<BoardDetailInfo> board = service.readBoard(boardNo); // boardNo번 글의 작성자 정보
+					if (!board.get(0).getWriter().equals(loginMember.getUserId())) {
+						response.sendRedirect("/hboard/viewBoard?status=authFail&boardNo=" + boardNo);
+						log.info("작성자와 로그인한 유저아이디가 다르므로 쫒겨남 ㅠㅠㅠ");
+						return false;
+					} else { // 작성자와 로그인한 유저가 같다면
+						goOriginPath = true;
+					} 
+				} else if(uri.contains("cboard")) {
+					// 댓글형 게시판의 글수정/삭제의 경우 read메서드의 반환타입(BoardDetailInfo)이 다르므로
+					BoardDetailInfo board = cService.readBoard(boardNo);
+					if(!board.getWriter().equals(loginMember.getUserId())) {
+						response.sendRedirect("/cboard/viewBoard?status=autoFail&boardNo="+boardNo);
+						System.out.println("cboard: 작성자와 로그인한 유저아이디가 다르므로 쫒겨남");
+						return false;
+					} else {
+						goOriginPath = true;						
+					}
 				}
+				
+				
+				
 			}
 			goOriginPath = true;
 		}

@@ -33,5 +33,6 @@ public class BoardDetailInfo {
 	
 	private String userName;
 	private String email;
+	private String hobby;
 	
 }
