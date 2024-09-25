@@ -12,17 +12,17 @@
 	<select id="getAllHBoard"
 		resultType="com.miniproject.model.HBoardVO">
 		<!-- select * from hboard order by ref desc, refOrder asc -->
-		select * from hboard order by ref desc, refOrder asc limit
+		select * from hboard where boardType = 'hboard' order by ref desc, refOrder asc limit
 		#{startRowIndex}, #{viewPostCntperPage}
 	</select>
 
 	<!-- 새로운 게시글을 저장하는 쿼리문 -->
 	<insert id="saveNewBoard">
-		insert into hboard (title, content, writer)
+		insert into hboard (title, content, writer,
+		boardType)
 		values
-		(#{title}, #{content}, #{writer})
+		(#{title}, #{content}, #{writer}, 'hboard')
 	</insert>
-
 	<!-- 저장된 글번호 가져오는 쿼리문 -->
 	<select id="getMaxNo" resultType="int">
 		select max(boardNo) from hboard
@@ -116,7 +116,7 @@
 		join member m
 		on h.writer = m.userId
 		where h.boardNo =
-		#{boardNo}
+		#{boardNo} and boardType = 'hboard'
 	</select>
 
 	<!-- 조회수 처리 -->
@@ -171,9 +171,9 @@
 
 	<insert id="insertReplyBoard">
 		insert into hboard(title, content, writer, ref, step,
-		refOrder)
+		refOrder, boardType)
 		values(#{title}, #{content}, #{writer}, #{ref}, #{step},
-		#{refOrder})
+		#{refOrder}, 'hboard')
 	</insert>
 
 	<!-- 게시글 삭제 -->
@@ -227,24 +227,26 @@
 				where content like #{searchWord}
 			</when>
 		</choose>
+		where boardType = 'hboard'
 		order by ref desc, refOrder asc limit
 		#{startRowIndex},
 		#{viewPostCntperPage}
 	</select>
 
 	<select id="selectTotalCountWithSearchCriteria" resultType="int">
-		select count(*) from hboard
+		select count(*) from hboard where
 		<choose>
 			<when test="searchType == 'title'">
-				where title like #{searchWord}
+				title like #{searchWord} and
 			</when>
 			<when test="searchType == 'writer'">
-				where writer like #{searchWord}
+				writer like #{searchWord} and
 			</when>
 			<when test="searchType == 'content'">
-				where content like #{searchWord}
+				content like #{searchWord} and
 			</when>
 		</choose>
+		boardType = 'hboard'
 	</select>
 
 </mapper>

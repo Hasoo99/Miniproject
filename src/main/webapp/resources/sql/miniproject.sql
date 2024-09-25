@@ -307,4 +307,10 @@ ADD COLUMN `allimit` DATETIME NULL AFTER `sesid`;
 update member set sesid = #{sesId}, allimit = #{allimit} where userId = #{userId};
 
 -- 쿠키에 자동로그인을 체크한 유저를 자동로그인시키기 위한 유저 정보 조회
-select * from member where sesid = #{sesId};
+select * from member where sesid = #{sesId} and allimit > now();
+
+-- 댓글 게시판
+ALTER TABLE `sky`.`hboard` 
+ADD COLUMN `boardType` VARCHAR(10) NULL AFTER `isDelete`, COMMENT = '계층형게시판, 댓글형게시판' ;
+
+update hboard set boardType = 'hboard';
