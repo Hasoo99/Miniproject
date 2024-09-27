@@ -172,4 +172,28 @@ public class CBoardDAOImpl implements CBoardDAO{
 		return ses.selectList(NS + "getSearchBoard", params);
 	}
 
+	@Override
+	public int likeBoard(int boardNo, String who) throws Exception {
+		Map<String, Object> param = new HashMap<String, Object>();
+		param.put("who", who);
+		param.put("boardNo", boardNo);
+		return ses.insert(NS + "like", param);
+	}
+
+	@Override
+	public int updateBoardLikeCount(int n, int boardNo) throws Exception {
+		Map<String, Object> param = new HashMap<String, Object>();
+		param.put("n", n);
+		param.put("boardNo", boardNo);	
+		return ses.update(NS + "updateLikeCount", param);
+	}
+
+	@Override
+	public int disLikeBoard(int boardNo, String who) throws Exception {
+		Map<String, Object> param = new HashMap<String, Object>();
+		param.put("who", who);
+		param.put("boardNo", boardNo);
+		return ses.delete(NS + "dislike", param);
+	}
+
 }

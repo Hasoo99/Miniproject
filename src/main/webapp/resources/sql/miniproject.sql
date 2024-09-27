@@ -364,8 +364,60 @@ values('tosimi', '테스트 댓글2', 377);
 select * from comment where boardNo = ? order by commentNo desc;
 select * from comment where boardNo = 377 order by commentNo desc;
 
--- ? 글의 모든 댓그로가 각 댓글의 작성자의 프로필사진을 가져오는 쿼리문
+-- ? 글의 모든 댓글과 각 댓글의 작성자의 프로필사진을 가져오는 쿼리문
+select c.*, m.userImg from member m, comment c 
+where c.commenter = userId and c.boardNo = 377;
 
+select c.*, m.userImg from comment c inner join member m
+on m.userId = c.commenter
+where boardNo = #{boardNo}
+order by commentNo desc
+limit #{startRowIndex}, #{viewPostCntPerPage}
 
--- pagination 까지 결합한 쿼리문
+-- ?번 글의 총 댓글 갯수
+select count(*) from comment where boardNo = #{boardNo};
 
+-- 좋아요 테이블
+CREATE TABLE `sky`.`boardlike` (
+  `no` INT NOT NULL,
+  `who` VARCHAR(8) NULL,
+  `boardNo` INT NULL,
+  PRIMARY KEY (`no`),
+  INDEX `boardlike_member_fk_idx` (`who` ASC) VISIBLE,
+  INDEX `boardlike_boardNo_fk_idx` (`boardNo` ASC) VISIBLE,
+  CONSTRAINT `boardlike_member_fk`
+    FOREIGN KEY (`who`)
+    REFERENCES `sky`.`member` (`userId`)
+    ON DELETE CASCADE
+    ON UPDATE NO ACTION,
+  CONSTRAINT `boardlike_boardNo_fk`
+    FOREIGN KEY (`boardNo`)
+    REFERENCES `sky`.`hboard` (`boardNo`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+COMMENT = '댓글형 게시글 좋아요';
+
+ALTER TABLE `sky`.`boardlike` 
+CHANGE COLUMN `no` `no` INT(11) NOT NULL AUTO_INCREMENT ;
+
+-- hboard테이블에 likecount컬럼 추가
+ALTER TABLE `sky`.`hboard` 
+ADD COLUMN `likecount` INT NULL AFTER `boardType`;
+
+-- ?번 글을 who가 좋아요 합니다.
+insert into boardlike(who, boardNo) values(?,?);
+
+-- ?번 글을 who가 좋아요 해제합니다.
+delete from boardlike where who = ? and boardNo = ?;
+
+-- ?번 글을 who가 좋아한다면, hboard에 likecount컬럼 업데이트
+update hboard set likecount = likecount + 1 where boardNo = ?;
+
+-- ?번 글을 누가 좋아하는지
+select who from boardlike where boardNo = ?
+
+-- likecount의 기본값을 0으로 설정
+ALTER TABLE `sky`.`hboard` 
+CHANGE COLUMN `likecount` `likecount` INT(11) NULL DEFAULT 0 ;
+
+update hboard set likecount = likecount + 1 where boardNo = 377;

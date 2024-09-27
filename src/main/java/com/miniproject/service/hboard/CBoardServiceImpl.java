@@ -135,11 +135,11 @@ public class CBoardServiceImpl implements CBoardService {
 		boolean result = false;
 
 		System.out.println(modifyBoard.toString());
-		System.out.println("씨다오 업데이트보드바이보드노 : "+cDao.updateBoardByBoardNo(modifyBoard));
+		System.out.println("씨다오 업데이트보드바이보드노 : " + cDao.updateBoardByBoardNo(modifyBoard));
 
 		// 1) 순수게시글 update
 		if (cDao.updateBoardByBoardNo(modifyBoard) == 1) {
-			
+
 			result = true;
 		}
 
@@ -189,5 +189,38 @@ public class CBoardServiceImpl implements CBoardService {
 		log.info(pi.toString());
 
 		return pi;
+	}
+
+	@Override
+	@Transactional(rollbackFor = Exception.class)
+	public boolean likeBoard(int boardNo, String who) throws Exception {
+		boolean result = false;
+		// 좋아요
+		// 1) boardlike테이블에 저장 (insert)
+		if (cDao.likeBoard(boardNo, who) == 1) {
+			// System.out.println("likeBoard 실행");
+			// 2) hboard의 likecount를 업데이트 (+1)
+			if (cDao.updateBoardLikeCount(1, boardNo) == 1) { // 1을주면 +, -1을 주면 -
+				result = true;
+				System.out.println(boardNo + "번 글의 likecount 1+");
+			}
+		}
+		return result;
+	}
+
+	@Override
+	@Transactional(rollbackFor = Exception.class)
+	public boolean dislikeBoard(int boardNo, String who) throws Exception {
+		boolean result = false;
+		// 싫어요
+		// 1) boardlike테이블에서 삭제 (delete)
+		if (cDao.disLikeBoard(boardNo, who) == 1) {
+			// 2) hboard의 likecount를 업데이트 (-1)
+			if (cDao.updateBoardLikeCount(-1, boardNo) == 1) { // 1을주면 +, -1을 주면 -
+				result = true;
+				System.out.println(boardNo + "번 글의 likecount 1-");
+			}
+		}
+		return result;
 	}
 }

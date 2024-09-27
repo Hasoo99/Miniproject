@@ -237,4 +237,20 @@
 		boardType = 'cboard'
 	</select>
 
+	<!-- 좋아요 처리 -->
+	<insert id="like">
+		insert into boardlike(who, boardNo)
+		values(#{who},#{boardNo})
+	</insert>
+
+	<!-- 게시글 좋아요 수 업데이트 -->
+	<update id="updateLikeCount">
+		update hboard set likecount = likecount + #{n} where boardNo = #{boardNo}
+	</update>
+	
+	<!-- 좋아요 취소 -->
+	<delete id="dislike">
+		delete from boardlike where boardNo = #{boardNo} and who = #{who}
+	</delete>
+
 </mapper>

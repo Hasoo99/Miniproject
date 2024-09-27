@@ -182,4 +182,31 @@ public class CboardController {
 
 		return "redirect:/cboard/viewBoard?boardNo=" + modifyBoard.getBoardNo();
 	}
+
+	@RequestMapping(value = "/boardlike", method = RequestMethod.POST)
+	public ResponseEntity<String> likeDislike(@RequestParam("who") String who, @RequestParam("boardNo") int boardNo,
+			@RequestParam("like") String like) {
+		System.out.println(who + "님이" + boardNo + "번 글을" + like + "하신다고 합니다,");
+
+		ResponseEntity<String> result = null;
+		boolean dbResult = false;
+
+		try {
+
+			if (like.equals("like")) {
+				dbResult = service.likeBoard(boardNo, who);
+				//System.out.println("dbResult???" + dbResult);
+			} else if(like.equals("dislike")) {
+				dbResult = service.dislikeBoard(boardNo, who);
+			}
+			if(dbResult) {
+				result = new ResponseEntity<String>("success", HttpStatus.OK);
+			}
+		} catch (Exception e) {
+
+			e.printStackTrace();
+		}
+		return result;
+	}
+
 }

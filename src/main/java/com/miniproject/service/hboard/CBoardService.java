@@ -48,4 +48,10 @@ public interface CBoardService {
 
 	// 게시글 조회 -- 검색
 	Map<String, Object> getAllBoard(PagingInfoDTO dto, SearchCriteriaDTO searchCriteriaDTO)throws Exception;
+	
+	// 좋아요
+	boolean likeBoard(int boardNo, String who)throws Exception;
+
+	// 싫어요
+	boolean dislikeBoard(int boardNo, String who) throws Exception;
 }

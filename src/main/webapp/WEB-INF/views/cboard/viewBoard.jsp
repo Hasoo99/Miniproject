@@ -8,32 +8,175 @@
 <meta charset="UTF-8">
 <title>댓글 조회</title>
 <script src="http://code.jquery.com/jquery-latest.min.js"></script>
+<script src="https://kit.fontawesome.com/38e228fe6e.js"
+	crossorigin="anonymous"></script>
+<style>
+.commentInputArea {
+	margin-top: 10px;
+	padding: 10px;
+	display: flex;
+	align-items: center;
+	border: 1px solid lightgray;
+	border-radius: 0.3rem;
+}
+
+.commentList {
+	margin-top: 10px;
+	padding: 10px;
+}
+
+.commentBody {
+	display: flex;
+	justify-content: space-between;
+	flex-direction: row;
+	align-items: center;
+	font-size: 0.9rem;
+}
+
+.commenterProfile img {
+	width: 50px;
+	border-radius: 25px;
+	border: 1px solid lightgray;
+}
+
+.commentBodyArea {
+	flex: 1;
+	margin-left: 20px;
+}
+
+.commentInfo {
+	display: flex;
+	flex-direction: row;
+	justify-content: space-between;
+	font-size: 0.7rem;
+}
+
+.commentBtns img {
+	width: 20px;
+}
+
+.commentContent {
+	flex: 1;
+}
+</style>
+
 <script type="text/javascript">
+let pageNo = 1;
+
 	$(function() {
 		
-		getAllComments();
-		console.log("${param.boardNo}");
+		getAllComments(pageNo);
+		//console.log("${param.boardNo}");
 		
+		$(".fa-heart").click(function() {
+			//alert($(this).attr("id"));
+			if($(this).attr("id")=='dislike') {
+				$(this).attr("id", "like");
+				$(this).removeClass("fa-regular").addClass("fa-solid");
+			} else if ($(this).attr("id")=="like") {
+				$(this).attr("id", "dislike");
+				$(this).removeClass("fa-solid").addClass("fa-regular");
+			}
+			
+			sendBoardLike($(this).attr("id"));
+		});
 		
 		$(".modalCloseBtn").click(function() {
 			$("#myModal").hide();
 		});
 
 	});
-
-	function getAllComments() {
+	
+	function sendBoardLike(doesLike) {
+		//console.log(doesLike);
+		let who = preAuth(); // 로그인한 userId
+		let boardNo = '${param.boardNo}';
 		$.ajax({
-	          url: "/comment/all/${param.boardNo}", // 데이터가 송수신될 서버의 주소
+	          url: "/cboard/boardlike", // 데이터가 송수신될 서버의 주소
+	          type: "post", // 통신 방식 (GET, POST, PUT, DELETE)
+			  data: {
+				"who" : who,
+				"boardNo" : boardNo,
+				"like" : doesLike
+			  },
+	          dataType: "text", // 수신 받을 데이터 타입 (MIME TYPE)
+	          success: function (data) {
+	            // 통신이 성공하면 수행할 함수
+	            console.log(data);
+	          },
+	          error: function () {},
+	          complete: function () {},
+	        });
+	}
+
+	function getAllComments(pageNo) {
+		$.ajax({
+	          url: "/comment/all/${param.boardNo}/" + pageNo, // 데이터가 송수신될 서버의 주소
 	          type: "GET", // 통신 방식 (GET, POST, PUT, DELETE)
 	          dataType: "json", // 수신 받을 데이터 타입 (MIME TYPE)
 	          success: function (data) {
 	            // 통신이 성공하면 수행할 함수
 	            console.log(data);
-	            displayAllComments(data);
+	            if(data.resultCode == 200 || data.resultMessage == "SUCCESS") {	            	
+	            	outputComment(data);
+	            }
+	            //displayAllComments(data);
 	          },
 	          error: function () {},
 	          complete: function () {},
 	        });
+	}
+	
+	function outputComment(comments) {
+		let output = '<div class="list-group">';
+		
+		// 댓글이 없을 경우
+		if(comments.data.commentList.length == 0) {
+			output += `<div class="empty">`;
+			output += `<img src="/resourece/images/noContent.png">`;
+			output += `</div>`;
+		} else {
+			$.each(comments.data.commentList, function(i, item) {
+				output += `<div class="list-group-item" id="comment_\${item.commentNo}">`;
+				output += `<div class="commentBody">`;
+				
+				output += `<div class="commenterProfile">`;
+				output += `<img src="/resources/userImg/\${item.userImg}"/>`;
+				output += `</div>`;
+				
+				output += `<div class="commentBodyArea">`;
+				output += `<div class="commentHeader">`;
+				
+				output += `<div class="commentContent">\${item.content}`;
+				
+				if(item.commenter != '${loginMember.userId}') {
+					// 작성자와 로그인유저가 같지 않은 경우
+					output += `<div class="commentBtns"></div></div>`;
+				} else if(item.commenter == '${loginMember.userId}') {
+					output += `<div class="commentBtns"><img src="/resources/images/modify.png" onclick="modifyComment(\${item.commentNo});"/>"`;
+					output += `<img src="/resources/images/remove.png" onclick="removeContent(\${item.commentNo});/></div></div>"`;
+				}
+				
+				output += `<div class="commentInfo"/>`;
+				let elapsedTime = processPostDate(item.regDate);
+				output += `<div class="regData">\${elapsedTime}</div>`;
+				
+				output += `<div class="commenter">\${item.commenter}</div>`;
+				output += `</div>`;
+				
+				output += `</div>`;				
+				output += `</div>`;				
+				output += `</div>`;				
+				output += `</div>`;				
+				
+			});	
+		}
+		
+		
+		output += '</div>';
+		//console.log(output);
+		$(".commentList").html(output);
+		
 	}
 	
 	function displayAllComments(json) {
@@ -182,6 +325,8 @@
 					class="form-control" id="readCount" value="${board.readCount }"
 					readonly />
 			</div>
+
+			<i class="fa-regular fa-heart" id="dislike"></i>
 
 			<div class="mb-3">
 				<label for="content">내용:</label>

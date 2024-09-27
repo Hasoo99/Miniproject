@@ -23,4 +23,6 @@ public class CommentVO {
 	private String content;
 	private Timestamp regDate;
 	private int boardNo;
+	
+	private String userImg;
 }

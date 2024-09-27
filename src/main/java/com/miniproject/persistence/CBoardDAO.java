@@ -84,5 +84,14 @@ public interface CBoardDAO {
 
 	// 게시글 목록 조회 -- 검색어 + 페이징
 	List<HBoardVO> selectAllBoard(PagingInfo pi, SearchCriteriaDTO searchCriteriaDTO)throws Exception;
+
+	// 좋아요
+	int likeBoard(int boardNo, String who)throws Exception;
+
+	// 좋아요 수 업데이트
+	int updateBoardLikeCount(int i, int boardNo)throws Exception;
+
+	// 좋아요 취소하기
+	int disLikeBoard(int boardNo, String who)throws Exception;
 	
 }
