@@ -22,4 +22,7 @@ public interface MemberDAO {
 
 	// 자동로그인 유저 확인
 	MemberDTO checkAutoLogin(String savedCookieSesId) throws Exception;
+
+	// 댓글 작성시 포인트 업데이트
+	int updateUserPointComment(String commenter)throws Exception;
 }

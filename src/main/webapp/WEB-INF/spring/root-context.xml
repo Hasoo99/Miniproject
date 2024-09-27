@@ -77,5 +77,7 @@
 		base-package="com.miniproject.service.member" />
 	<context:component-scan
 		base-package="com.miniproject.util" />
+	<context:component-scan
+		base-package="com.miniproject.comment" />
 
 </beans>

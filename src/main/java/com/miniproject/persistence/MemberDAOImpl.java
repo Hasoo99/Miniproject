@@ -48,4 +48,9 @@ public class MemberDAOImpl implements MemberDAO{
 		return ses.selectOne(ns + "checkAutoLoginUser", savedCookieSesId);
 	}
 
+	@Override
+	public int updateUserPointComment(String commenter) throws Exception {
+		return ses.update(ns + "updateUserPointComment", commenter);
+	}
+
 }

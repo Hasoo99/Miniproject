@@ -7,5 +7,7 @@
 		<typeAlias type="com.miniproject.model.HBoardVO" alias="HBoardVO"/>
 		<typeAlias type="com.miniproject.model.BoardUpFilesVODTO" alias="BoardUpFilesVODTO"/>
 		<typeAlias type="com.miniproject.model.MemberDTO" alias="MemberDTO"/>
+		<typeAlias type="com.miniproject.model.CommentVO" alias="CommentVO"/>
+		
 	</typeAliases>
 </configuration>

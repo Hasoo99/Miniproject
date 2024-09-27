@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.miniproject.mappers.commentMapper">
+
+	<select id="getComments"
+		resultType="com.miniproject.model.CommentVO">
+		select * from comment where boardNo = #{boardNo} order by
+		commentNo desc
+	</select>
+
+	<insert id="saveComment">
+		insert into comment(commenter, content, boardNo)
+		values(#{commenter}, #{content}, #{boardNo})
+	</insert>
+
+</mapper>

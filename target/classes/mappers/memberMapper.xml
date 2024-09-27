@@ -16,6 +16,15 @@
 		where userId =
 		#{userId}
 	</update>
+	
+	<update id="updateUserPointComment">
+		update member
+		set userPoint = userPoint + (select
+		pointScore from pointdef where
+		pointwhy = '댓글작성')
+		where userId =
+		#{userId}
+	</update>
 
 	<!-- 아이디 중복체크 -->
 	<select id="selectUserId" resultType="int">

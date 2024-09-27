@@ -333,3 +333,39 @@ select h.boardNo, h.title, h.content, h.writer,
 		374
 		and
 		boardType = 'cboard'
+        
+        -- 댓글 테이블 생성
+        
+        CREATE TABLE `sky`.`comment` (
+  `commentNo` INT NOT NULL AUTO_INCREMENT,
+  `commenter` VARCHAR(8) NULL,
+  `content` VARCHAR(500) NOT NULL,
+  `regDate` DATETIME NULL DEFAULT now(),
+  `boardNo` INT NULL,
+  PRIMARY KEY (`commentNo`),
+  INDEX `boardNo_board_fk_idx` (`boardNo` ASC) VISIBLE,
+  INDEX `commenter_member_fk_idx` (`commenter` ASC) VISIBLE,
+  CONSTRAINT `boardNo_board_fk`
+    FOREIGN KEY (`boardNo`)
+    REFERENCES `sky`.`hboard` (`boardNo`)
+    ON DELETE CASCADE
+    ON UPDATE NO ACTION,
+  CONSTRAINT `commenter_member_fk`
+    FOREIGN KEY (`commenter`)
+    REFERENCES `sky`.`member` (`userId`)
+    ON DELETE CASCADE
+    ON UPDATE NO ACTION)
+COMMENT = '댓글을 저장하는 테이블';
+
+insert into comment(commenter, content, boardNo)
+values('tosimi', '테스트 댓글2', 377);
+
+-- ?번 글의 모든 댓글 조회
+select * from comment where boardNo = ? order by commentNo desc;
+select * from comment where boardNo = 377 order by commentNo desc;
+
+-- ? 글의 모든 댓그로가 각 댓글의 작성자의 프로필사진을 가져오는 쿼리문
+
+
+-- pagination 까지 결합한 쿼리문
+
