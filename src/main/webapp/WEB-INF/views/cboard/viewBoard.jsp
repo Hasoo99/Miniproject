@@ -58,6 +58,10 @@
 .commentContent {
 	flex: 1;
 }
+
+.fa-heart {
+	color: red;
+}
 </style>
 
 <script type="text/javascript">
@@ -103,8 +107,13 @@ let pageNo = 1;
 	          success: function (data) {
 	            // 통신이 성공하면 수행할 함수
 	            console.log(data);
+	            if(data == "success") {
+	            	location.reload();
+	            }
 	          },
-	          error: function () {},
+	          error: function () {
+	        	alert("error");
+	          },
 	          complete: function () {},
 	        });
 	}
@@ -133,7 +142,7 @@ let pageNo = 1;
 		// 댓글이 없을 경우
 		if(comments.data.commentList.length == 0) {
 			output += `<div class="empty">`;
-			output += `<img src="/resourece/images/noContent.png">`;
+			output += `<img src="/resources/images/noContent.png">`;
 			output += `</div>`;
 		} else {
 			$.each(comments.data.commentList, function(i, item) {
@@ -169,14 +178,46 @@ let pageNo = 1;
 				output += `</div>`;				
 				output += `</div>`;				
 				
-			});	
+			});
+			
+			outputPagination(comments);
 		}
-		
 		
 		output += '</div>';
 		//console.log(output);
 		$(".commentList").html(output);
 		
+	}
+	
+	function outputPagination(comments) {
+		// 댓글 페이징
+		let output = `<ul class="pagination justify-content-center" style="margin:20px 0">`;
+		let pagingInfo = comments.data.pagingInfo;
+		
+		console.log(pagingInfo);
+		
+		if(pageNo > 1) {
+			output += `<li class="page-item"><a class="page-link" onclick="getAllComments(--pageNo);">Previous</a></li>`;
+		} else if(pageNo == 1) {			
+			output += `<li class="page-item"><a class="page-link disabled" >Previous</a></li>`;
+		}
+		for(let i = pagingInfo.startPageNoCurBlock; i <= pagingInfo.endPageNoCurBlock; i++) {			
+			if(pageNo == i) {				
+				output += `<li class="page-item active"><a class="page-link" onclick="pageNo = \${i}; getAllComments(\${i});">\${i}</a></li>`;
+			} else {				
+				output += `<li class="page-item"><a class="page-link" onclick="pageNo = \${i}; getAllComments(\${i});">\${i}</a></li>`;
+			}
+		}
+		if(pageNo < pagingInfo.totalPageCnt) {
+			output += `<li class="page-item"><a class="page-link" onclick="getAllComments(++pageNo);">Next</a></li>`;
+		} else if(pageNo == pagingInfo.totalPageCnt) {
+			output += `<li class="page-item"><a class="page-link disabled" >Next</a></li>`;
+		}
+		//console.log("pageNo : " + pageNo);
+		output += ``;
+		
+		output += `</ul>`;
+		$(".commentPagination").html(output);
 	}
 	
 	function displayAllComments(json) {
@@ -263,7 +304,10 @@ let pageNo = 1;
 		         success: function (data) {
 		          // 통신이 성공하면 수행할 함수
 		         console.log(data);
-		          getAllComments();
+		          if(data.msg=="success") {	
+		        	  $("#commentContent").val(""); //댓글 입력창 비우기
+		          	getAllComments(1); // 1페이지 댓글 불러와서 출력
+		          }
 		          },
 		          error: function () {},
 		          complete: function () {},
@@ -326,7 +370,39 @@ let pageNo = 1;
 					readonly />
 			</div>
 
-			<i class="fa-regular fa-heart" id="dislike"></i>
+
+
+			<div>${peopleLike.size() }</div>
+			<!-- 이 글을 A님 B님 C님 외 N명이 좋아합니다. -->
+			<div class="mb-3 mt-3">
+				이 글을 <span> <c:if test="${not empty peopleLike }">
+						<c:if test="${peopleLike.size() le 3 }">
+							<c:forEach var="who" items="${peopleLike }" varStatus="status">
+								<c:if test="${status.first }">${who }님</c:if>
+								<c:if test="${not status.first }">, ${who }님</c:if>
+							</c:forEach>이 좋아합니다.
+						</c:if>
+						<c:if test="${peopleLike.size() ge 4 }">
+							<c:forEach var="who" items="${peopleLike }" begin="1" end="3">${who }님, </c:forEach>
+							외 <span>${peopleLike.size()-3 }</span>명이 좋아합니다.
+						</c:if>
+					</c:if>
+				</span>
+			</div>
+			<!-- boardNo번 글을 좋아요한 로그인한 유저인 경우, solid 하트로 보여주기 -->
+			<div>
+				<c:set var="hasHeart" value="false"></c:set>
+				<c:forEach var="who" items="${peopleLike }">
+					<c:if test="${who == loginMember.userId }">
+						<i class="fa-solid fa-heart" id="like"></i>
+						<c:set var="hasHeart" value="true"></c:set>
+					</c:if>
+				</c:forEach>
+				<c:if test="${hasHeart == false }">
+					<i class="fa-regular fa-heart" id="dislike"></i>
+				</c:if>
+			</div>
+
 
 			<div class="mb-3">
 				<label for="content">내용:</label>
@@ -349,6 +425,7 @@ let pageNo = 1;
 		</div>
 
 		<div class="commentList"></div>
+		<div class="commentPagination"></div>
 
 
 	</div>

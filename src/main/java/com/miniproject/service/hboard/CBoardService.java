@@ -54,4 +54,8 @@ public interface CBoardService {
 
 	// 싫어요
 	boolean dislikeBoard(int boardNo, String who) throws Exception;
+	
+	// 해당 게시글을 좋아요 한 사람들 조회
+	List<String> selectPeopleWhoLike(int boardNo) throws Exception;
+	
 }

@@ -223,4 +223,9 @@ public class CBoardServiceImpl implements CBoardService {
 		}
 		return result;
 	}
+
+	@Override
+	public List<String> selectPeopleWhoLike(int boardNo) throws Exception {
+		return cDao.selectpeopleWhoLikeBoard(boardNo);
+	}
 }

@@ -125,16 +125,18 @@ public class CboardController {
 		BoardDetailInfo boardDetailInfo = null;
 		String ipAddr = GetClientIPAddr.getClientIp(request);
 		String returnViewPage = "";
+		List<String> peopleLike = null;
 
 		System.out.println(request.getRemoteAddr() + "가 " + boardNo + "번 글을 조회한다!");
 		logger.info(ipAddr + "가 " + boardNo + "번 글을 조회한다!");
 		System.out.println("URI" + request.getRequestURI());
-
+		
 		if (boardNo == -1) {
 			return "redirect:/cboard/listAll";
 		} else {
 			try {
 
+				peopleLike = service.selectPeopleWhoLike(boardNo);
 				if (request.getRequestURI().equals("/cboard/viewBoard")) {
 					System.out.println("게시글 상세보기 호출");
 					boardDetailInfo = service.read(boardNo, ipAddr);
@@ -151,6 +153,7 @@ public class CboardController {
 				returnViewPage = "redirect:/cboard/listAll?status=fail";
 			}
 			model.addAttribute("board", boardDetailInfo);
+			model.addAttribute("peopleLike", peopleLike);
 		}
 		return returnViewPage;
 	}
@@ -203,8 +206,8 @@ public class CboardController {
 				result = new ResponseEntity<String>("success", HttpStatus.OK);
 			}
 		} catch (Exception e) {
-
 			e.printStackTrace();
+			result = new ResponseEntity<String>("fail", HttpStatus.CONFLICT);
 		}
 		return result;
 	}

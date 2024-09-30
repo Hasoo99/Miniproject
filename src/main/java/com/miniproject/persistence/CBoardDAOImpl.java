@@ -196,4 +196,11 @@ public class CBoardDAOImpl implements CBoardDAO{
 		return ses.delete(NS + "dislike", param);
 	}
 
+	@Override
+	public List<String> selectpeopleWhoLikeBoard(int boardNo) throws Exception {
+		return ses.selectList(NS + "peopleWhoLikeBoard", boardNo);
+	}
+	
+	
+
 }

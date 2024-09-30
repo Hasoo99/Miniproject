@@ -245,12 +245,19 @@
 
 	<!-- 게시글 좋아요 수 업데이트 -->
 	<update id="updateLikeCount">
-		update hboard set likecount = likecount + #{n} where boardNo = #{boardNo}
+		update hboard set likecount = likecount + #{n} where
+		boardNo = #{boardNo}
 	</update>
-	
+
 	<!-- 좋아요 취소 -->
 	<delete id="dislike">
-		delete from boardlike where boardNo = #{boardNo} and who = #{who}
+		delete from boardlike where boardNo = #{boardNo} and
+		who = #{who}
 	</delete>
+
+	<!-- 좋아요 누른사람 조회 -->
+	<select id="peopleWhoLikeBoard" resultType="string">
+		select who from boardlike where boardNo = #{boardNo}
+	</select>
 
 </mapper>

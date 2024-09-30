@@ -93,5 +93,8 @@ public interface CBoardDAO {
 
 	// 좋아요 취소하기
 	int disLikeBoard(int boardNo, String who)throws Exception;
+
+	// 좋아요 누른사람 조회
+	List<String> selectpeopleWhoLikeBoard(int boardNo) throws Exception;
 	
 }
