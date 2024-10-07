@@ -85,40 +85,44 @@ public class LoginInterceptor extends HandlerInterceptorAdapter {
 	@Override
 	public void postHandle(HttpServletRequest request, HttpServletResponse response, Object handler,
 			ModelAndView modelAndView) throws Exception {
-		log.info("postHandler() 호출...");
-
-		if (request.getMethod().toUpperCase().equals("POST")) {
+		log.info("postHandle() 호출......");
+		HttpSession ses = request.getSession();
+		
+		if (request.getMethod().toUpperCase().equals("POST")) { 
 			Map<String, Object> model = modelAndView.getModel();
 			MemberDTO loginMember = (MemberDTO) model.get("loginMember");
-
+			
 			log.info("loginMember : " + loginMember);
-
+			
 			if (loginMember != null) { // 로그인 성공
 				// 세션에 로그인한 유저의 정보를 저장
-				HttpSession ses = request.getSession();
-				ses.setAttribute("loginMember", loginMember);
-
-				// 자동로그인을 체크한 유저라면.....
-				System.out.println("remember : " + request.getParameter("remember"));
-				// 체크했다면 request.getParameter() = on, 체크하지 않으면 null
-				if (request.getParameter("remember") != null) {
-					log.info("자동 로그인 유저입니다");
-					saveAutoLoginInfo(request, response);
+				if (loginMember.getIsLock().equals("Y")) { // 계정이 잠긴 유저
+					log.info("계정이 잠긴 유저가 로그인 함!!!!!!! userId = {}", loginMember.getUserId());
+					ses.setAttribute("destPath", "/member/reAuth");
+					
+				} else { // 계정이 잠기지 않은 유저
+					ses = request.getSession();
+					ses.setAttribute("loginMember", loginMember); // 로그인멤버를 세션에 저장
+					
+					// 자동로그인을 체크한 유저라면....
+					log.info("request.getParameter : {}", request.getParameter("remember"));
+					// 체크했다면 request.getParameter() = on, 체크하지 않으면 null
+					if (request.getParameter("remember") != null) {
+						log.info("자동로그인 유저입니다.");
+						saveAutoLoginInfo(request, response);
+					} 
 				}
-
 				// 로그인하기 이전에 저장한 경로가 있다면, 그쪽으로 가고
-				// 없다면 "/" 로 페이지로 이동
-				String tmp = (String) ses.getAttribute("destPath");
-				String query = (String) ses.getAttribute("query");
-				log.info("요청 query : {}", query);
-				log.info("가야할 곳 : {} ", tmp);
+				// 없다면 "/"로 페이지로 이동
+				String tmp =  (String) ses.getAttribute("destPath");
+				log.info("가야할 곳 : {}", tmp);
+				
 				response.sendRedirect((tmp == null) ? "/" : tmp);
-
+				
 			} else { // 로그인 실패
 				response.sendRedirect("/member/login?status=fail");
-			}
+			} 
 		}
-
 	}
 
 	private void saveAutoLoginInfo(HttpServletRequest request, HttpServletResponse response) throws Exception {

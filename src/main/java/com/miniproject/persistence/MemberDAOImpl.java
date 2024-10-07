@@ -53,4 +53,8 @@ public class MemberDAOImpl implements MemberDAO{
 		return ses.update(ns + "updateUserPointComment", commenter);
 	}
 
+	@Override
+	public int updateAccountLock(String userId) throws Exception {
+		return ses.update(ns + "updateAccountLock", userId);
+	}
 }

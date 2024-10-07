@@ -15,6 +15,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -215,6 +216,12 @@ public class MemberController {
 		}
 
 		return "redirect:/";
+	}
+	
+	@GetMapping("/reAuth")
+	public String reAuthGET() {
+		
+		return "/member/reAuth"; // 뷰 반환 - 인증 절차를 다시 밟는다.
 	}
 
 }

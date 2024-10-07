@@ -6,16 +6,14 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
-@NoArgsConstructor
 @AllArgsConstructor
+@NoArgsConstructor
 @Getter
 @Setter
 @ToString
-public class LoginDTO {
-
-	private String userId;
-	private String userPwd1;
-	private boolean remember;
-	private String ipAddr;
+public class SapleDTO {
+	private String id;
+	private String name;
+	
 	
 }

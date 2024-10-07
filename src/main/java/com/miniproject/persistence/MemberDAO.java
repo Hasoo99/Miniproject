@@ -6,7 +6,7 @@ import com.miniproject.model.MemberDTO;
 
 public interface MemberDAO {
 	// 유저의 userPoint를 수정하는 메서드
-	int updateUserPoint(String userId)throws Exception;
+	int updateUserPoint(String userId) throws Exception;
 
 	// 아이디 중복체크
 	int selectDuplicateId(String tmpUserId) throws Exception;
@@ -24,5 +24,8 @@ public interface MemberDAO {
 	MemberDTO checkAutoLogin(String savedCookieSesId) throws Exception;
 
 	// 댓글 작성시 포인트 업데이트
-	int updateUserPointComment(String commenter)throws Exception;
+	int updateUserPointComment(String commenter) throws Exception;
+
+	// 유저의 계정을 잠금
+	int updateAccountLock(String userId) throws Exception;
 }

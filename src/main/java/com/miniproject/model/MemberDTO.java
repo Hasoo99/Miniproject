@@ -28,5 +28,6 @@ public class MemberDTO {
 	private Timestamp registerDate;
 	private String userImg;
 	private int userPoint;
+	private String isLock;
 	
 }
